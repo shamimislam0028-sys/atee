@@ -1,0 +1,7 @@
+{
+    "name": "employee-profile-system",
+    "description": "Employee Profile System with Excel Import",
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.29"
+    }
+}
