@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Profile System - Auto-Update from Google Sheets</title>
+    <title>Employee Profile System - Attendance & Leave Management</title>
     <style>
         * {
             margin: 0;
@@ -319,6 +319,61 @@
             margin-top: 10px;
         }
 
+        /* Leave Balance Section */
+        .leave-balance-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .leave-balance-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .leave-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .leave-item {
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .leave-type {
+            font-size: 10px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .leave-count {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .leave-count.low {
+            color: #dc2626;
+        }
+
+        .leave-count.medium {
+            color: #d97706;
+        }
+
+        .leave-count.good {
+            color: #16a34a;
+        }
+
         /* Individual Dashboard Styles */
         .dashboard-view {
             display: none;
@@ -390,6 +445,97 @@
             color: #2d3748;
         }
 
+        /* Leave Balance Dashboard Cards */
+        .leave-balance-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            background: white;
+        }
+
+        .leave-stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .leave-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .leave-stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .leave-stat-icon {
+            font-size: 28px;
+        }
+
+        .leave-stat-type {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .leave-stat-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 10px;
+        }
+
+        .leave-remaining {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .leave-total {
+            font-size: 16px;
+            color: #6c757d;
+        }
+
+        .leave-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .leave-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .leave-history-section {
+            padding: 30px;
+            background: white;
+        }
+
+        .leave-history-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .leave-history-table {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
         .attendance-table {
             padding: 30px;
         }
@@ -425,6 +571,35 @@
 
         tbody tr:hover {
             background: #f8f9fa;
+        }
+
+        .leave-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .leave-badge.annual {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .leave-badge.casual {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .leave-badge.sick {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .leave-badge.marriage {
+            background: #fce7f3;
+            color: #831843;
         }
 
         .no-data {
@@ -498,6 +673,14 @@
                 margin-top: 15px;
                 justify-content: center;
             }
+
+            .leave-items {
+                grid-template-columns: 1fr;
+            }
+
+            .leave-balance-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -506,8 +689,8 @@
         <!-- Main List View -->
         <div id="listView">
             <div class="header">
-                <h1>📊 Employee Profile System</h1>
-                <p>Auto-Updating from Google Sheets - Real-time Employee Attendance Tracking</p>
+                <h1>🏢 Employee Profile System</h1>
+                <p>Attendance & Leave Management - Auto-Updating from Google Sheets</p>
                 <div class="auto-refresh-indicator">
                     <div class="refresh-dot"></div>
                     <span>Auto-refresh every 5 minutes</span>
@@ -515,13 +698,14 @@
             </div>
 
             <div class="instructions">
-                <h3>ℹ️ System Information:</h3>
+                <h3>📋 System Information:</h3>
                 <ul>
-                    <li>✅ <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
+                    <li>📊 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
                     <li>🔄 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
-                    <li>📊 <strong>Data Source:</strong> Connected to Google Sheets for real-time updates</li>
+                    <li>🗂️ <strong>Leave Management:</strong> Track Annual, Casual, Sick, and Marriage leave balances</li>
+                    <li>📅 <strong>Half-Day Leave:</strong> Two 0.5-day leaves automatically counted as 1 full day</li>
                     <li>🔍 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
-                    <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance history</li>
+                    <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance & leave history</li>
                 </ul>
             </div>
 
@@ -649,6 +833,7 @@
                 </div>
             </div>
 
+            <!-- Attendance Stats -->
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <div class="stat-icon">📅</div>
@@ -656,7 +841,7 @@
                     <div class="stat-value" id="statTotalDays">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-icon">⏰</div>
                     <div class="stat-label">Total Hours</div>
                     <div class="stat-value" id="statTotalHours">0</div>
                 </div>
@@ -677,6 +862,88 @@
                 </div>
             </div>
 
+            <!-- Leave Balance Cards -->
+            <div class="leave-balance-grid">
+                <div class="leave-stat-card">
+                    <div class="leave-stat-header">
+                        <div class="leave-stat-icon">🏖️</div>
+                        <div class="leave-stat-type">Annual Leave</div>
+                    </div>
+                    <div class="leave-stat-numbers">
+                        <span class="leave-remaining" id="annualRemaining">15</span>
+                        <span class="leave-total">/ 15 days</span>
+                    </div>
+                    <div class="leave-progress-bar">
+                        <div class="leave-progress-fill" id="annualProgress" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="leave-stat-card">
+                    <div class="leave-stat-header">
+                        <div class="leave-stat-icon">📋</div>
+                        <div class="leave-stat-type">Casual Leave</div>
+                    </div>
+                    <div class="leave-stat-numbers">
+                        <span class="leave-remaining" id="casualRemaining">10</span>
+                        <span class="leave-total">/ 10 days</span>
+                    </div>
+                    <div class="leave-progress-bar">
+                        <div class="leave-progress-fill" id="casualProgress" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="leave-stat-card">
+                    <div class="leave-stat-header">
+                        <div class="leave-stat-icon">🏥</div>
+                        <div class="leave-stat-type">Sick Leave</div>
+                    </div>
+                    <div class="leave-stat-numbers">
+                        <span class="leave-remaining" id="sickRemaining">14</span>
+                        <span class="leave-total">/ 14 days</span>
+                    </div>
+                    <div class="leave-progress-bar">
+                        <div class="leave-progress-fill" id="sickProgress" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="leave-stat-card">
+                    <div class="leave-stat-header">
+                        <div class="leave-stat-icon">💍</div>
+                        <div class="leave-stat-type">Marriage Leave</div>
+                    </div>
+                    <div class="leave-stat-numbers">
+                        <span class="leave-remaining" id="marriageRemaining">7</span>
+                        <span class="leave-total">/ 7 days</span>
+                    </div>
+                    <div class="leave-progress-bar">
+                        <div class="leave-progress-fill" id="marriageProgress" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave History -->
+            <div class="leave-history-section">
+                <h2 class="leave-history-title">📅 Leave History</h2>
+                <div class="leave-history-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>📅 Leave Type</th>
+                                <th>📆 Start Date</th>
+                                <th>📆 End Date</th>
+                                <th>📊 Days</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveHistoryTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #6c757d;">No leave records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Attendance Records -->
             <div class="attendance-table">
                 <h2 style="margin-bottom: 20px;">📋 Attendance Records</h2>
                 <div class="table-container">
@@ -684,9 +951,9 @@
                         <thead>
                             <tr>
                                 <th>📅 Date</th>
-                                <th>⏰ Clock In</th>
-                                <th>🕐 Clock Out</th>
-                                <th>⏱️ Total Hours</th>
+                                <th>🌅 Clock In</th>
+                                <th>🌆 Clock Out</th>
+                                <th>⏰ Total Hours</th>
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
@@ -697,47 +964,49 @@
         </div>
     </div>
 
-    <!-- Include SheetJS library for Excel parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <script>
         let employeeData = [];
+        let leaveData = [];
         let currentEmployee = null;
         let autoRefreshInterval = null;
 
+        // Leave balance configuration
+        const LEAVE_QUOTAS = {
+            'Annual Leave': 15,
+            'Casual Leave': 10,
+            'Sick Leave': 14,
+            'Marriage Leave': 7
+        };
+
         // Google Sheets Configuration
-        // Original URL: https://docs.google.com/spreadsheets/d/e/2PACX-1vSAERMOKEcsHsH9wfP2eQN419P9pb8ia-loqjh12xPVLwpwApPQ_UzjnkQZ27TbCQ/pubhtml
-        const PUBLISHED_SHEET_KEY = '2PACX-1vSAERMOKEcsHsH9wfP2eQN419P9pb8ia-loqjh12xPVLwpwApPQ_UzjnkQZ27TbCQ';
-        const SHEET_NAME = 'Sheet1'; // Change if your sheet has a different name
+        const SHEET_ID = '1Kvrf6CZcq45s4-fhOOvU9Ws6ps-wte527xaWZ-p2hqc';
+        const SHEET_NAME = 'Sheet1';
         
-        // Multiple methods to access Google Sheets data
-        function getGoogleSheetUrls(publishedKey) {
+        function getGoogleSheetUrls() {
             return [
-                // Method 1: Direct CSV export (published sheets)
-                `https://docs.google.com/spreadsheets/d/e/${publishedKey}/pub?output=csv`,
-                // Method 2: Alternative CSV format
-                `https://docs.google.com/spreadsheets/d/e/${publishedKey}/pub?gid=0&single=true&output=csv`,
-                // Method 3: Using CORS proxy as fallback
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/e/${publishedKey}/pub?output=csv`)}`
+                // Method 1: Direct CSV export
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
+                // Method 2: Using gviz API
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`,
+                // Method 3: CORS proxy
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`)}`
             ];
         }
 
-        // Load data from Google Sheets with multiple fallback methods
+        // Load data from Google Sheets
         async function loadGoogleSheetData() {
             const statusBadge = document.getElementById('statusBadge');
             const refreshButton = document.getElementById('refreshButton');
             
             try {
-                // Update UI to loading state
                 statusBadge.className = 'status-badge loading';
                 statusBadge.innerHTML = '<span class="loading-spinner"></span> Loading...';
                 refreshButton.disabled = true;
 
-                const urls = getGoogleSheetUrls(PUBLISHED_SHEET_KEY);
+                const urls = getGoogleSheetUrls();
                 let csvText = null;
                 let lastError = null;
                 
-                // Try each URL method until one works
                 for (let i = 0; i < urls.length; i++) {
                     try {
                         console.log(`Trying method ${i + 1}:`, urls[i]);
@@ -746,7 +1015,6 @@
                         if (response.ok) {
                             csvText = await response.text();
                             console.log('Successfully fetched data using method', i + 1);
-                            console.log('Data preview:', csvText.substring(0, 200));
                             break;
                         } else {
                             lastError = `HTTP ${response.status}: ${response.statusText}`;
@@ -769,14 +1037,18 @@
                     throw new Error('No data found in the spreadsheet');
                 }
                 
-                employeeData = processEmployeeData(data);
-                console.log('Processed employee data:', employeeData.length, 'records');
+                // Process both attendance and leave data
+                const { attendance, leaves } = processSheetData(data);
+                employeeData = attendance;
+                leaveData = leaves;
                 
-                if (employeeData.length === 0) {
-                    throw new Error('No valid employee records found. Please check column headers match: Employee ID, Name, Date, Clock In, Clock Out, Total Hours');
+                console.log('Processed employee data:', employeeData.length, 'attendance records');
+                console.log('Processed leave data:', leaveData.length, 'leave records');
+                
+                if (employeeData.length === 0 && leaveData.length === 0) {
+                    throw new Error('No valid records found. Please check column headers.');
                 }
                 
-                // Update status
                 statusBadge.className = 'status-badge success';
                 statusBadge.textContent = '✅ Connected';
                 
@@ -784,7 +1056,7 @@
                 document.getElementById('lastUpdate').textContent = 
                     `Last updated: ${now.toLocaleTimeString()}`;
                 document.getElementById('recordCount').textContent = 
-                    `Records: ${employeeData.length}`;
+                    `Records: ${employeeData.length} attendance, ${leaveData.length} leave`;
                 
                 populateYearFilters();
                 applyFilters();
@@ -798,19 +1070,15 @@
                 const container = document.getElementById('profilesContainer');
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">⚠️</div>
+                        <div class="no-data-icon">❌</div>
                         <h2>Error Loading Data</h2>
                         <p style="color: #dc2626; font-weight: bold; margin: 15px 0;">${error.message}</p>
                         <p>Please check the following:</p>
                         <ul style="text-align: left; margin: 20px auto; max-width: 600px; line-height: 1.8;">
-                            <li><strong>Step 1:</strong> Open your Google Sheet</li>
-                            <li><strong>Step 2:</strong> Go to <strong>File → Share → Publish to web</strong></li>
-                            <li><strong>Step 3:</strong> Select <strong>"Entire Document"</strong> and <strong>"Web page"</strong></li>
-                            <li><strong>Step 4:</strong> Click <strong>"Publish"</strong> and confirm</li>
-                            <li><strong>Step 5:</strong> Make sure sharing is set to <strong>"Anyone with the link can view"</strong></li>
-                            <li><strong>Column Headers Required:</strong> Employee ID, Name, Date, Clock In, Clock Out, Total Hours</li>
+                            <li><strong>Step 1:</strong> Make sure the Google Sheet is shared as <strong>"Anyone with the link can view"</strong></li>
+                            <li><strong>Step 2:</strong> Verify the Sheet ID in the code matches your sheet</li>
+                            <li><strong>Required Columns:</strong> Employee ID, Name, Date, Clock In, Clock Out, Total Hours, Type of Leave, Start Date of Leave, End Date of Leave, Total Leave Days</li>
                             <li>Check your internet connection</li>
-                            <li>Open browser console (F12) for detailed error logs</li>
                         </ul>
                         <button onclick="loadGoogleSheetData()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
                             🔄 Try Again
@@ -822,25 +1090,18 @@
             }
         }
 
-        // Enhanced CSV parser to handle various formats
+        // Parse CSV
         function parseCSV(csvText) {
-            // Remove BOM if present
             csvText = csvText.replace(/^\uFEFF/, '');
-            
             const lines = csvText.trim().split('\n');
-            if (lines.length === 0) {
-                console.error('CSV is empty');
-                return [];
-            }
+            if (lines.length === 0) return [];
             
-            // Parse headers - handle quoted values
             const headers = parseCSVLine(lines[0]);
             console.log('CSV Headers:', headers);
             
             const data = [];
-            
             for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue; // Skip empty lines
+                if (!lines[i].trim()) continue;
                 
                 const values = parseCSVLine(lines[i]);
                 const row = {};
@@ -849,17 +1110,14 @@
                     row[header] = values[index] || '';
                 });
                 
-                // Only add rows with at least some data
                 if (values.some(v => v && v.trim())) {
                     data.push(row);
                 }
             }
             
-            console.log('Parsed CSV rows:', data.length);
             return data;
         }
         
-        // Parse a single CSV line handling quoted values with commas
         function parseCSVLine(line) {
             const result = [];
             let current = '';
@@ -882,25 +1140,48 @@
             return result;
         }
 
-        // Process employee data
-        function processEmployeeData(data) {
-            return data.map(row => {
-                const employeeId = row['Employee ID'] || row['EmployeeID'] || row['ID'] || 'N/A';
-                const name = row['Name'] || row['Employee Name'] || 'Unknown';
-                const date = parseDate(row['Date'] || row['date'] || '');
-                const clockIn = row['Clock In'] || row['ClockIn'] || row['Check In'] || 'N/A';
-                const clockOut = row['Clock Out'] || row['ClockOut'] || row['Check Out'] || 'N/A';
-                const totalHours = row['Total Hours'] || row['TotalHours'] || row['Hours'] || 'N/A';
+        // Process sheet data - separate attendance and leave records
+        function processSheetData(data) {
+            const attendance = [];
+            const leaves = [];
+            
+            data.forEach(row => {
+                const employeeId = row['Employee ID'] || row['EmployeeID'] || row['ID'] || '';
+                const name = row['Name'] || row['Employee Name'] || '';
                 
-                return {
-                    id: employeeId,
-                    name: name,
-                    date: date,
-                    clockIn: clockIn,
-                    clockOut: clockOut,
-                    totalHours: totalHours
-                };
-            }).filter(e => e.id !== 'N/A' && e.name !== 'Unknown'); // Filter out invalid entries
+                // Skip empty rows
+                if (!employeeId && !name) return;
+                
+                // Check if this is a leave record (has Type of Leave)
+                const leaveType = row['Type of Leave'] || row['Type'] || '';
+                
+                if (leaveType && leaveType.trim()) {
+                    // This is a leave record
+                    leaves.push({
+                        id: employeeId,
+                        name: name,
+                        leaveType: leaveType.trim(),
+                        startDate: parseDate(row['Start Date of Leave'] || row['Start Date'] || ''),
+                        endDate: parseDate(row['End Date of Leave'] || row['End Date'] || ''),
+                        totalDays: parseFloat(row['Total Leave Days'] || row['Days'] || 0)
+                    });
+                } else {
+                    // This is an attendance record
+                    const date = parseDate(row['Date'] || row['date'] || '');
+                    if (date) {
+                        attendance.push({
+                            id: employeeId,
+                            name: name,
+                            date: date,
+                            clockIn: row['Clock In'] || row['ClockIn'] || 'N/A',
+                            clockOut: row['Clock Out'] || row['ClockOut'] || 'N/A',
+                            totalHours: row['Total Hours'] || row['TotalHours'] || 'N/A'
+                        });
+                    }
+                }
+            });
+            
+            return { attendance, leaves };
         }
 
         // Parse date from various formats
@@ -923,6 +1204,41 @@
             }
             
             return dateStr;
+        }
+
+        // Calculate leave balance for an employee
+        function calculateLeaveBalance(employeeId, employeeName) {
+            const employeeLeaves = leaveData.filter(l => 
+                l.id === employeeId && l.name === employeeName
+            );
+            
+            const balance = {
+                'Annual Leave': LEAVE_QUOTAS['Annual Leave'],
+                'Casual Leave': LEAVE_QUOTAS['Casual Leave'],
+                'Sick Leave': LEAVE_QUOTAS['Sick Leave'],
+                'Marriage Leave': LEAVE_QUOTAS['Marriage Leave']
+            };
+            
+            const taken = {
+                'Annual Leave': 0,
+                'Casual Leave': 0,
+                'Sick Leave': 0,
+                'Marriage Leave': 0
+            };
+            
+            employeeLeaves.forEach(leave => {
+                const leaveType = leave.leaveType;
+                if (balance.hasOwnProperty(leaveType)) {
+                    taken[leaveType] += leave.totalDays;
+                }
+            });
+            
+            // Calculate remaining
+            Object.keys(balance).forEach(type => {
+                balance[type] -= taken[type];
+            });
+            
+            return { balance, taken };
         }
 
         // Event Listeners
@@ -1047,14 +1363,14 @@
             return Object.values(grouped);
         }
 
-        // Display profiles
+        // Display profiles with leave balance
         function displayProfiles(profiles) {
             const container = document.getElementById('profilesContainer');
             
             if (profiles.length === 0) {
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">🔍</div>
+                        <div class="no-data-icon">📭</div>
                         <h2>No Data Found</h2>
                         <p>Try adjusting your filters or search criteria</p>
                     </div>
@@ -1064,6 +1380,16 @@
             
             container.innerHTML = profiles.map(employee => {
                 const latestRecord = employee.records[employee.records.length - 1];
+                const { balance } = calculateLeaveBalance(employee.id, employee.name);
+                
+                // Determine color class for leave counts
+                const getLeaveClass = (remaining, total) => {
+                    const percentage = (remaining / total) * 100;
+                    if (percentage <= 20) return 'low';
+                    if (percentage <= 50) return 'medium';
+                    return 'good';
+                };
+                
                 return `
                     <div class="profile-card" onclick='showDashboard(${JSON.stringify(employee.id)}, ${JSON.stringify(employee.name)})'>
                         <div class="profile-header">
@@ -1078,11 +1404,11 @@
                         
                         <div class="time-details">
                             <div class="time-item">
-                                <div class="time-label">⏰ Latest Clock In</div>
+                                <div class="time-label">🌅 Latest Clock In</div>
                                 <div class="time-value">${latestRecord.clockIn}</div>
                             </div>
                             <div class="time-item">
-                                <div class="time-label">🕐 Latest Clock Out</div>
+                                <div class="time-label">🌆 Latest Clock Out</div>
                                 <div class="time-value">${latestRecord.clockOut}</div>
                             </div>
                         </div>
@@ -1091,6 +1417,29 @@
                             <div class="total-hours-label">Total Hours (Period)</div>
                             <div class="total-hours-value">${employee.totalHours.toFixed(2)}</div>
                         </div>
+                        
+                        <div class="leave-balance-section">
+                            <div class="leave-balance-title">📋 Leave Balance</div>
+                            <div class="leave-items">
+                                <div class="leave-item">
+                                    <div class="leave-type">🏖️ Annual</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave'])}">${balance['Annual Leave']} / ${LEAVE_QUOTAS['Annual Leave']}</div>
+                                </div>
+                                <div class="leave-item">
+                                    <div class="leave-type">📋 Casual</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave'])}">${balance['Casual Leave']} / ${LEAVE_QUOTAS['Casual Leave']}</div>
+                                </div>
+                                <div class="leave-item">
+                                    <div class="leave-type">🏥 Sick</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">${balance['Sick Leave']} / ${LEAVE_QUOTAS['Sick Leave']}</div>
+                                </div>
+                                <div class="leave-item">
+                                    <div class="leave-type">💍 Marriage</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave'])}">${balance['Marriage Leave']} / ${LEAVE_QUOTAS['Marriage Leave']}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="records-count">${employee.recordCount} attendance record(s)</div>
                     </div>
                 `;
@@ -1140,6 +1489,7 @@
             
             records.sort((a, b) => b.date.localeCompare(a.date));
             
+            // Update attendance stats
             const totalDays = records.length;
             const totalHours = records.reduce((sum, r) => sum + (parseFloat(r.totalHours) || 0), 0);
             const avgHours = totalDays > 0 ? (totalHours / totalDays).toFixed(2) : 0;
@@ -1153,6 +1503,42 @@
             document.getElementById('statEarliestIn').textContent = clockIns[0] || '--';
             document.getElementById('statLatestOut').textContent = clockOuts[clockOuts.length - 1] || '--';
             
+            // Update leave balance
+            const { balance, taken } = calculateLeaveBalance(currentEmployee.id, currentEmployee.name);
+            
+            // Update leave balance cards
+            updateLeaveCard('annual', balance['Annual Leave'], taken['Annual Leave'], LEAVE_QUOTAS['Annual Leave']);
+            updateLeaveCard('casual', balance['Casual Leave'], taken['Casual Leave'], LEAVE_QUOTAS['Casual Leave']);
+            updateLeaveCard('sick', balance['Sick Leave'], taken['Sick Leave'], LEAVE_QUOTAS['Sick Leave']);
+            updateLeaveCard('marriage', balance['Marriage Leave'], taken['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave']);
+            
+            // Update leave history table
+            const employeeLeaves = leaveData.filter(l => 
+                l.id === currentEmployee.id && l.name === currentEmployee.name
+            ).sort((a, b) => b.startDate.localeCompare(a.startDate));
+            
+            const leaveHistoryBody = document.getElementById('leaveHistoryTableBody');
+            if (employeeLeaves.length === 0) {
+                leaveHistoryBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #6c757d;">No leave records found</td>
+                    </tr>
+                `;
+            } else {
+                leaveHistoryBody.innerHTML = employeeLeaves.map(leave => {
+                    const badgeClass = leave.leaveType.toLowerCase().replace(' ', '-');
+                    return `
+                        <tr>
+                            <td><span class="leave-badge ${badgeClass}">${leave.leaveType}</span></td>
+                            <td>${leave.startDate || 'N/A'}</td>
+                            <td>${leave.endDate || 'N/A'}</td>
+                            <td><strong>${leave.totalDays} ${leave.totalDays === 1 ? 'day' : 'days'}</strong></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Update attendance table
             const tbody = document.getElementById('attendanceTableBody');
             tbody.innerHTML = records.map(r => `
                 <tr>
@@ -1164,26 +1550,48 @@
             `).join('');
         }
 
+        // Update individual leave card
+        function updateLeaveCard(type, remaining, taken, total) {
+            const remainingEl = document.getElementById(`${type}Remaining`);
+            const progressEl = document.getElementById(`${type}Progress`);
+            
+            remainingEl.textContent = remaining.toFixed(1);
+            
+            const percentage = (remaining / total) * 100;
+            progressEl.style.width = `${percentage}%`;
+            
+            // Change color based on remaining percentage
+            if (percentage <= 20) {
+                remainingEl.style.color = '#dc2626';
+                progressEl.style.background = 'linear-gradient(90deg, #dc2626 0%, #ef4444 100%)';
+            } else if (percentage <= 50) {
+                remainingEl.style.color = '#d97706';
+                progressEl.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)';
+            } else {
+                remainingEl.style.color = '#16a34a';
+                progressEl.style.background = 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
+
         // Setup auto-refresh
         function setupAutoRefresh() {
-            // Clear existing interval if any
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
             }
             
-            // Refresh every 5 minutes (300000 milliseconds)
+            // Refresh every 5 minutes
             autoRefreshInterval = setInterval(() => {
                 loadGoogleSheetData();
             }, 300000);
         }
 
-        // Initialize on page load
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             loadGoogleSheetData();
             setupAutoRefresh();
         });
 
-        // Cleanup on page unload
+        // Cleanup
         window.addEventListener('beforeunload', () => {
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
