@@ -602,6 +602,11 @@
             color: #831843;
         }
 
+        .leave-badge.work-from-home {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
         .no-data {
             text-align: center;
             padding: 60px 20px;
@@ -702,7 +707,7 @@
                 <ul>
                     <li>📊 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
                     <li>🔄 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
-                    <li>🗂️ <strong>Leave Management:</strong> Track Annual, Casual, Sick, and Marriage leave balances</li>
+                    <li>🗂️ <strong>Leave Management:</strong> Track Annual, Casual, Sick leave balances and Work From Home days</li>
                     <li>📅 <strong>Half-Day Leave:</strong> Two 0.5-day leaves automatically counted as 1 full day</li>
                     <li>🔍 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
                     <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance & leave history</li>
@@ -794,7 +799,7 @@
             </div>
 
             <div class="filter-section">
-                <div class="filter-groupr">
+                <div class="filter-group">
                     <label class="filter-label">Dashboard View</label>
                     <select id="dashboardViewType" class="filter-select">
                         <option value="all">All Records</option>
@@ -908,15 +913,15 @@
 
                 <div class="leave-stat-card">
                     <div class="leave-stat-header">
-                        <div class="leave-stat-icon">💍</div>
-                        <div class="leave-stat-type">Marriage Leave</div>
+                        <div class="leave-stat-icon">🏠</div>
+                        <div class="leave-stat-type">Work From Home</div>
                     </div>
                     <div class="leave-stat-numbers">
-                        <span class="leave-remaining" id="marriageRemaining">7</span>
-                        <span class="leave-total">/ 7 days</span>
+                        <span class="leave-remaining" id="marriageRemaining">0</span>
+                        <span class="leave-total">days</span>
                     </div>
                     <div class="leave-progress-bar">
-                        <div class="leave-progress-fill" id="marriageProgress" style="width: 100%"></div>
+                        <div class="leave-progress-fill" id="marriageProgress" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -975,7 +980,7 @@
             'Annual Leave': 15,
             'Casual Leave': 10,
             'Sick Leave': 14,
-            'Marriage Leave': 7
+            'Work From Home': 0
         };
 
         // Google Sheets Configuration
@@ -1216,14 +1221,14 @@
                 'Annual Leave': LEAVE_QUOTAS['Annual Leave'],
                 'Casual Leave': LEAVE_QUOTAS['Casual Leave'],
                 'Sick Leave': LEAVE_QUOTAS['Sick Leave'],
-                'Marriage Leave': LEAVE_QUOTAS['Marriage Leave']
+                'Work From Home': LEAVE_QUOTAS['Work From Home']
             };
             
             const taken = {
                 'Annual Leave': 0,
                 'Casual Leave': 0,
                 'Sick Leave': 0,
-                'Marriage Leave': 0
+                'Work From Home': 0
             };
             
             employeeLeaves.forEach(leave => {
@@ -1434,7 +1439,7 @@
                                     <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">${balance['Sick Leave']} / ${LEAVE_QUOTAS['Sick Leave']}</div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">💍 Marriage</div>
+                                    <div class="leave-type">🏠 WFH</div>
                                     <div class="leave-count ${getLeaveClass(balance['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave'])}">${balance['Marriage Leave']} / ${LEAVE_QUOTAS['Marriage Leave']}</div>
                                 </div>
                             </div>
@@ -1510,7 +1515,7 @@
             updateLeaveCard('annual', balance['Annual Leave'], taken['Annual Leave'], LEAVE_QUOTAS['Annual Leave']);
             updateLeaveCard('casual', balance['Casual Leave'], taken['Casual Leave'], LEAVE_QUOTAS['Casual Leave']);
             updateLeaveCard('sick', balance['Sick Leave'], taken['Sick Leave'], LEAVE_QUOTAS['Sick Leave']);
-            updateLeaveCard('marriage', balance['Marriage Leave'], taken['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave']);
+            updateLeaveCard('marriage', taken['Work From Home'], taken['Work From Home'], 1);
             
             // Update leave history table
             const employeeLeaves = leaveData.filter(l => 
@@ -1555,21 +1560,32 @@
             const remainingEl = document.getElementById(`${type}Remaining`);
             const progressEl = document.getElementById(`${type}Progress`);
             
-            remainingEl.textContent = remaining.toFixed(1);
-            
-            const percentage = (remaining / total) * 100;
-            progressEl.style.width = `${percentage}%`;
-            
-            // Change color based on remaining percentage
-            if (percentage <= 20) {
-                remainingEl.style.color = '#dc2626';
-                progressEl.style.background = 'linear-gradient(90deg, #dc2626 0%, #ef4444 100%)';
-            } else if (percentage <= 50) {
-                remainingEl.style.color = '#d97706';
-                progressEl.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)';
+            // Special handling for Work From Home (type='marriage' but shows WFH count)
+            if (type === 'marriage') {
+                // For WFH, show count of days worked from home
+                remainingEl.textContent = taken.toFixed(1);
+                // Progress bar represents usage (not remaining)
+                const percentage = Math.min((taken / 30) * 100, 100); // Cap at 100%
+                progressEl.style.width = `${percentage}%`;
+                remainingEl.style.color = '#1e40af';
+                progressEl.style.background = 'linear-gradient(90deg, #3b82f6 0%, #1e40af 100%)';
             } else {
-                remainingEl.style.color = '#16a34a';
-                progressEl.style.background = 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)';
+                remainingEl.textContent = remaining.toFixed(1);
+                
+                const percentage = (remaining / total) * 100;
+                progressEl.style.width = `${percentage}%`;
+                
+                // Change color based on remaining percentage
+                if (percentage <= 20) {
+                    remainingEl.style.color = '#dc2626';
+                    progressEl.style.background = 'linear-gradient(90deg, #dc2626 0%, #ef4444 100%)';
+                } else if (percentage <= 50) {
+                    remainingEl.style.color = '#d97706';
+                    progressEl.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)';
+                } else {
+                    remainingEl.style.color = '#16a34a';
+                    progressEl.style.background = 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)';
+                }
             }
         }
 
