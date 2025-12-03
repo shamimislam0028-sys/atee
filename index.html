@@ -1385,7 +1385,7 @@
             
             container.innerHTML = profiles.map(employee => {
                 const latestRecord = employee.records[employee.records.length - 1];
-                const { balance } = calculateLeaveBalance(employee.id, employee.name);
+                const { balance, taken } = calculateLeaveBalance(employee.id, employee.name);
                 
                 // Determine color class for leave counts
                 const getLeaveClass = (remaining, total) => {
@@ -1440,7 +1440,7 @@
                                 </div>
                                 <div class="leave-item">
                                     <div class="leave-type">🏠 WFH</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Work From Home'], LEAVE_QUOTAS['Work From Home'])}">${balance['Work From Home']} / ${LEAVE_QUOTAS['Work From Home']}</div>
+                                    <div class="leave-count">${taken['Work From Home'] || 0}</div>
                                 </div>
                             </div>
                         </div>
