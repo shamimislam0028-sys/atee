@@ -319,7 +319,6 @@
             margin-top: 10px;
         }
 
-        /* Leave Balance Section */
         .leave-balance-section {
             background: #f8f9fa;
             padding: 15px;
@@ -374,7 +373,6 @@
             color: #16a34a;
         }
 
-        /* Individual Dashboard Styles */
         .dashboard-view {
             display: none;
         }
@@ -445,7 +443,6 @@
             color: #2d3748;
         }
 
-        /* Leave Balance Dashboard Cards */
         .leave-balance-grid {
             padding: 30px;
             display: grid;
@@ -700,11 +697,10 @@
             <div class="instructions">
                 <h3>📋 System Information:</h3>
                 <ul>
-                    <li>📊 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
-                    <li>🔄 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
-                    <li>🗂️ <strong>Leave Management:</strong> Track Annual, Casual, Sick, and Marriage leave balances</li>
-                    <li>📅 <strong>Half-Day Leave:</strong> Two 0.5-day leaves automatically counted as 1 full day</li>
-                    <li>🔍 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
+                    <li>🔄 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
+                    <li>🔃 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
+                    <li>📊 <strong>Leave Management:</strong> Track Annual, Casual, Sick, and Marriage leave balances</li>
+                    <li>📅 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
                     <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance & leave history</li>
                 </ul>
             </div>
@@ -781,7 +777,7 @@
 
         <!-- Individual Dashboard View -->
         <div id="dashboardView" class="dashboard-view">
-            <div class="header">
+            <div class="dashboard-header">
                 <button class="back-button" onclick="showListView()">← Back to List</button>
                 <h1>Employee Dashboard</h1>
                 <div class="dashboard-employee-info">
@@ -856,7 +852,7 @@
                     <div class="stat-value" id="statEarliestIn">--</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🌆</div>
+                    <div class="stat-icon">🌙</div>
                     <div class="stat-label">Latest Clock Out</div>
                     <div class="stat-value" id="statLatestOut">--</div>
                 </div>
@@ -880,7 +876,7 @@
 
                 <div class="leave-stat-card">
                     <div class="leave-stat-header">
-                        <div class="leave-stat-icon">📋</div>
+                        <div class="leave-stat-icon">☕</div>
                         <div class="leave-stat-type">Casual Leave</div>
                     </div>
                     <div class="leave-stat-numbers">
@@ -923,14 +919,14 @@
 
             <!-- Leave History -->
             <div class="leave-history-section">
-                <h2 class="leave-history-title">📅 Leave History</h2>
+                <h2 class="leave-history-title">📋 Leave History</h2>
                 <div class="leave-history-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>📅 Leave Type</th>
-                                <th>📆 Start Date</th>
-                                <th>📆 End Date</th>
+                                <th>🏷️ Leave Type</th>
+                                <th>📅 Start Date</th>
+                                <th>📅 End Date</th>
                                 <th>📊 Days</th>
                             </tr>
                         </thead>
@@ -945,14 +941,14 @@
 
             <!-- Attendance Records -->
             <div class="attendance-table">
-                <h2 style="margin-bottom: 20px;">📋 Attendance Records</h2>
+                <h2 style="margin-bottom: 20px;">🕐 Attendance Records</h2>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>📅 Date</th>
                                 <th>🌅 Clock In</th>
-                                <th>🌆 Clock Out</th>
+                                <th>🌙 Clock Out</th>
                                 <th>⏰ Total Hours</th>
                             </tr>
                         </thead>
@@ -970,7 +966,7 @@
         let currentEmployee = null;
         let autoRefreshInterval = null;
 
-        // Leave balance configuration
+        // Leave balance configuration (as per standard HR policies)
         const LEAVE_QUOTAS = {
             'Annual Leave': 15,
             'Casual Leave': 10,
@@ -978,8 +974,8 @@
             'Marriage Leave': 7
         };
 
-        // Google Sheets Configuration
-        const SHEET_ID = '1Kvrf6CZcq45s4-fhOOvU9Ws6ps-wte527xaWZ-p2hqc';
+        // Google Sheets Configuration - UPDATE THIS WITH YOUR SHEET ID
+        const SHEET_ID = '1ZbnFOGdGi5DAWBQqyIrLzAVaCw3wUzxN5lN_1un2UXo';
         const SHEET_NAME = 'Sheet1';
         
         function getGoogleSheetUrls() {
@@ -988,7 +984,7 @@
                 `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
                 // Method 2: Using gviz API
                 `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`,
-                // Method 3: CORS proxy
+                // Method 3: CORS proxy fallback
                 `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`)}`
             ];
         }
@@ -1007,6 +1003,7 @@
                 let csvText = null;
                 let lastError = null;
                 
+                // Try multiple methods to fetch the data
                 for (let i = 0; i < urls.length; i++) {
                     try {
                         console.log(`Trying method ${i + 1}:`, urls[i]);
@@ -1037,16 +1034,16 @@
                     throw new Error('No data found in the spreadsheet');
                 }
                 
-                // Process both attendance and leave data
-                const { attendance, leaves } = processSheetData(data);
-                employeeData = attendance;
-                leaveData = leaves;
+                // Process the sheet data into attendance and leave records
+                const processedData = processSheetData(data);
+                employeeData = processedData.attendance;
+                leaveData = processedData.leaves;
                 
                 console.log('Processed employee data:', employeeData.length, 'attendance records');
                 console.log('Processed leave data:', leaveData.length, 'leave records');
                 
                 if (employeeData.length === 0 && leaveData.length === 0) {
-                    throw new Error('No valid records found. Please check column headers.');
+                    throw new Error('No valid records found. Please check the data format.');
                 }
                 
                 statusBadge.className = 'status-badge success';
@@ -1070,15 +1067,15 @@
                 const container = document.getElementById('profilesContainer');
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">❌</div>
+                        <div class="no-data-icon">⚠️</div>
                         <h2>Error Loading Data</h2>
                         <p style="color: #dc2626; font-weight: bold; margin: 15px 0;">${error.message}</p>
                         <p>Please check the following:</p>
                         <ul style="text-align: left; margin: 20px auto; max-width: 600px; line-height: 1.8;">
                             <li><strong>Step 1:</strong> Make sure the Google Sheet is shared as <strong>"Anyone with the link can view"</strong></li>
                             <li><strong>Step 2:</strong> Verify the Sheet ID in the code matches your sheet</li>
-                            <li><strong>Required Columns:</strong> Employee ID, Name, Date, Clock In, Clock Out, Total Hours, Type of Leave, Start Date of Leave, End Date of Leave, Total Leave Days</li>
-                            <li>Check your internet connection</li>
+                            <li><strong>Step 3:</strong> Check your internet connection</li>
+                            <li><strong>Required Columns:</strong> Name, Employee ID, Date columns (e.g., 2-Nov-2025), Total Hour columns, Type of Leave, Start Date of Leave, End Date of Leave, Total Leave Days</li>
                         </ul>
                         <button onclick="loadGoogleSheetData()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
                             🔄 Try Again
@@ -1092,6 +1089,7 @@
 
         // Parse CSV
         function parseCSV(csvText) {
+            // Remove BOM if present
             csvText = csvText.replace(/^\uFEFF/, '');
             const lines = csvText.trim().split('\n');
             if (lines.length === 0) return [];
@@ -1110,6 +1108,7 @@
                     row[header] = values[index] || '';
                 });
                 
+                // Only add rows that have some data
                 if (values.some(v => v && v.trim())) {
                     data.push(row);
                 }
@@ -1140,67 +1139,106 @@
             return result;
         }
 
-        // Process sheet data - separate attendance and leave records
+        // Process sheet data - extract attendance records from date columns
         function processSheetData(data) {
             const attendance = [];
             const leaves = [];
             
             data.forEach(row => {
-                const employeeId = row['Employee ID'] || row['EmployeeID'] || row['ID'] || '';
-                const name = row['Name'] || row['Employee Name'] || '';
+                const employeeName = row['Name'] || '';
+                const employeeId = row['Employee ID'] || '';
                 
                 // Skip empty rows
-                if (!employeeId && !name) return;
+                if (!employeeName && !employeeId) return;
                 
-                // Check if this is a leave record (has Type of Leave)
-                const leaveType = row['Type of Leave'] || row['Type'] || '';
+                // Process leave data if present
+                const leaveType = row['Type of Leave'] || '';
+                const startDate = row['Start Date of Leave'] || '';
+                const endDate = row['End Date of Leave'] || '';
+                const totalLeaveDays = row['Total Leave Days'] || '';
                 
-                if (leaveType && leaveType.trim()) {
-                    // This is a leave record
+                if (leaveType && startDate && endDate && totalLeaveDays) {
                     leaves.push({
+                        name: employeeName,
                         id: employeeId,
-                        name: name,
                         leaveType: leaveType.trim(),
-                        startDate: parseDate(row['Start Date of Leave'] || row['Start Date'] || ''),
-                        endDate: parseDate(row['End Date of Leave'] || row['End Date'] || ''),
-                        totalDays: parseFloat(row['Total Leave Days'] || row['Days'] || 0)
+                        startDate: formatDate(startDate),
+                        endDate: formatDate(endDate),
+                        totalDays: parseFloat(totalLeaveDays) || 0
                     });
-                } else {
-                    // This is an attendance record
-                    const date = parseDate(row['Date'] || row['date'] || '');
-                    if (date) {
-                        attendance.push({
-                            id: employeeId,
-                            name: name,
-                            date: date,
-                            clockIn: row['Clock In'] || row['ClockIn'] || 'N/A',
-                            clockOut: row['Clock Out'] || row['ClockOut'] || 'N/A',
-                            totalHours: row['Total Hours'] || row['TotalHours'] || 'N/A'
-                        });
-                    }
                 }
+                
+                // Process attendance data from date columns
+                Object.keys(row).forEach(key => {
+                    // Check if column name is a date (e.g., "2-Nov-2025")
+                    if (key.match(/^\d{1,2}-[A-Za-z]{3}-\d{4}$/)) {
+                        const clockIn = row[key];
+                        const totalHourKey = Object.keys(row).find(k => 
+                            k === 'Total Hour' && 
+                            Object.keys(row).indexOf(k) === Object.keys(row).indexOf(key) + 1
+                        );
+                        
+                        // Find the next occurrence of "Total Hour" after this date
+                        const keyIndex = Object.keys(row).indexOf(key);
+                        let totalHours = '';
+                        let clockOut = '';
+                        
+                        // Look for Clock Out in the next column
+                        if (keyIndex + 1 < Object.keys(row).length) {
+                            const nextKey = Object.keys(row)[keyIndex + 1];
+                            if (nextKey === 'Clock Out' || nextKey.includes('Clock')) {
+                                clockOut = row[nextKey];
+                            }
+                        }
+                        
+                        // Look for Total Hour in nearby columns
+                        for (let i = keyIndex + 1; i < keyIndex + 5 && i < Object.keys(row).length; i++) {
+                            const checkKey = Object.keys(row)[i];
+                            if (checkKey === 'Total Hour' || checkKey.includes('Total')) {
+                                totalHours = row[checkKey];
+                                break;
+                            }
+                        }
+                        
+                        if (clockIn && clockIn.trim() && clockIn !== '0:00:00') {
+                            attendance.push({
+                                name: employeeName,
+                                id: employeeId,
+                                date: formatDate(key),
+                                clockIn: clockIn,
+                                clockOut: clockOut || 'N/A',
+                                totalHours: totalHours || 'N/A'
+                            });
+                        }
+                    }
+                });
             });
             
             return { attendance, leaves };
         }
 
-        // Parse date from various formats
-        function parseDate(dateStr) {
+        // Format date from "2-Nov-2025" to "2025-11-02"
+        function formatDate(dateStr) {
             if (!dateStr) return '';
             
-            // Try parsing as M/D/YYYY format
-            const parts = dateStr.split('/');
-            if (parts.length === 3) {
-                const month = parts[0].padStart(2, '0');
-                const day = parts[1].padStart(2, '0');
-                const year = parts[2];
-                return `${year}-${month}-${day}`;
+            // If already in YYYY-MM-DD format
+            if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                return dateStr;
             }
             
-            // Try parsing as ISO date
-            const date = new Date(dateStr);
-            if (!isNaN(date)) {
-                return date.toISOString().split('T')[0];
+            // Parse "2-Nov-2025" format
+            const months = {
+                'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+            };
+            
+            const match = dateStr.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+            if (match) {
+                const day = match[1].padStart(2, '0');
+                const month = months[match[2]];
+                const year = match[3];
+                return `${year}-${month}-${day}`;
             }
             
             return dateStr;
@@ -1355,12 +1393,38 @@
                 }
                 
                 grouped[key].records.push(record);
-                const hours = parseFloat(record.totalHours) || 0;
+                
+                // Parse total hours (format: "HH:MM:SS" or just hours)
+                const hours = parseTimeToHours(record.totalHours);
                 grouped[key].totalHours += hours;
                 grouped[key].recordCount++;
             });
             
             return Object.values(grouped);
+        }
+
+        // Parse time string to hours
+        function parseTimeToHours(timeStr) {
+            if (!timeStr || timeStr === 'N/A' || timeStr === '0:00:00') return 0;
+            
+            // Check if it's in HH:MM:SS format
+            const parts = timeStr.split(':');
+            if (parts.length === 3) {
+                const hours = parseInt(parts[0]) || 0;
+                const minutes = parseInt(parts[1]) || 0;
+                const seconds = parseInt(parts[2]) || 0;
+                return hours + (minutes / 60) + (seconds / 3600);
+            }
+            
+            // Otherwise try to parse as decimal
+            return parseFloat(timeStr) || 0;
+        }
+
+        // Format hours to HH:MM display
+        function formatHours(totalHours) {
+            const hours = Math.floor(totalHours);
+            const minutes = Math.round((totalHours - hours) * 60);
+            return `${hours}h ${minutes}m`;
         }
 
         // Display profiles with leave balance
@@ -1370,7 +1434,7 @@
             if (profiles.length === 0) {
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">📭</div>
+                        <div class="no-data-icon">🔍</div>
                         <h2>No Data Found</h2>
                         <p>Try adjusting your filters or search criteria</p>
                     </div>
@@ -1404,73 +1468,76 @@
                         
                         <div class="time-details">
                             <div class="time-item">
-                                <div class="time-label">🌅 Latest Clock In</div>
+                                <div class="time-label">Last Clock In</div>
                                 <div class="time-value">${latestRecord.clockIn}</div>
                             </div>
                             <div class="time-item">
-                                <div class="time-label">🌆 Latest Clock Out</div>
+                                <div class="time-label">Last Clock Out</div>
                                 <div class="time-value">${latestRecord.clockOut}</div>
                             </div>
                         </div>
                         
                         <div class="total-hours">
-                            <div class="total-hours-label">Total Hours (Period)</div>
-                            <div class="total-hours-value">${employee.totalHours.toFixed(2)}</div>
+                            <div class="total-hours-label">Total Hours Worked</div>
+                            <div class="total-hours-value">${formatHours(employee.totalHours)}</div>
+                        </div>
+                        
+                        <div class="records-count">
+                            ${employee.recordCount} attendance record${employee.recordCount !== 1 ? 's' : ''}
                         </div>
                         
                         <div class="leave-balance-section">
-                            <div class="leave-balance-title">📋 Leave Balance</div>
+                            <div class="leave-balance-title">📊 Leave Balance</div>
                             <div class="leave-items">
                                 <div class="leave-item">
-                                    <div class="leave-type">🏖️ Annual</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave'])}">${balance['Annual Leave']} / ${LEAVE_QUOTAS['Annual Leave']}</div>
+                                    <div class="leave-type">Annual</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave'])}">${balance['Annual Leave']}</div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">📋 Casual</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave'])}">${balance['Casual Leave']} / ${LEAVE_QUOTAS['Casual Leave']}</div>
+                                    <div class="leave-type">Casual</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave'])}">${balance['Casual Leave']}</div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">🏥 Sick</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">${balance['Sick Leave']} / ${LEAVE_QUOTAS['Sick Leave']}</div>
+                                    <div class="leave-type">Sick</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">${balance['Sick Leave']}</div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">💍 Marriage</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave'])}">${balance['Marriage Leave']} / ${LEAVE_QUOTAS['Marriage Leave']}</div>
+                                    <div class="leave-type">Marriage</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave'])}">${balance['Marriage Leave']}</div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="records-count">${employee.recordCount} attendance record(s)</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Show dashboard
+        // Show individual dashboard
         function showDashboard(employeeId, employeeName) {
             currentEmployee = { id: employeeId, name: employeeName };
             
-            document.getElementById('dashboardAvatar').textContent = employeeName.charAt(0).toUpperCase();
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('dashboardView').classList.add('active');
+            
             document.getElementById('dashboardId').textContent = employeeId;
             document.getElementById('dashboardName').textContent = employeeName;
-            
-            document.getElementById('listView').classList.add('hidden');
-            document.getElementById('dashboardView').classList.add('active');
+            document.getElementById('dashboardAvatar').textContent = employeeName.charAt(0).toUpperCase();
             
             updateDashboard();
         }
 
         // Show list view
         function showListView() {
-            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('listView').style.display = 'block';
             document.getElementById('dashboardView').classList.remove('active');
+            currentEmployee = null;
         }
 
         // Update dashboard
         function updateDashboard() {
             if (!currentEmployee) return;
             
-            let records = employeeData.filter(e => 
+            let filtered = employeeData.filter(e => 
                 e.id === currentEmployee.id && e.name === currentEmployee.name
             );
             
@@ -1480,119 +1547,101 @@
             const day = document.getElementById('dashboardDayFilter').value;
             
             if (viewType === 'year' && year) {
-                records = records.filter(e => e.date.startsWith(year));
+                filtered = filtered.filter(e => e.date.startsWith(year));
             } else if (viewType === 'month' && year && month) {
-                records = records.filter(e => e.date.startsWith(`${year}-${month}`));
+                filtered = filtered.filter(e => e.date.startsWith(`${year}-${month}`));
             } else if (viewType === 'day' && day) {
-                records = records.filter(e => e.date === day);
+                filtered = filtered.filter(e => e.date === day);
             }
             
-            records.sort((a, b) => b.date.localeCompare(a.date));
+            // Update stats
+            const totalDays = filtered.length;
+            const totalHours = filtered.reduce((sum, record) => sum + parseTimeToHours(record.totalHours), 0);
+            const avgHours = totalDays > 0 ? totalHours / totalDays : 0;
             
-            // Update attendance stats
-            const totalDays = records.length;
-            const totalHours = records.reduce((sum, r) => sum + (parseFloat(r.totalHours) || 0), 0);
-            const avgHours = totalDays > 0 ? (totalHours / totalDays).toFixed(2) : 0;
+            const clockInTimes = filtered.map(r => r.clockIn).filter(t => t && t !== 'N/A');
+            const clockOutTimes = filtered.map(r => r.clockOut).filter(t => t && t !== 'N/A');
             
-            const clockIns = records.map(r => r.clockIn).filter(t => t !== 'N/A').sort();
-            const clockOuts = records.map(r => r.clockOut).filter(t => t !== 'N/A').sort();
+            const earliestIn = clockInTimes.length > 0 ? clockInTimes.sort()[0] : '--';
+            const latestOut = clockOutTimes.length > 0 ? clockOutTimes.sort().reverse()[0] : '--';
             
             document.getElementById('statTotalDays').textContent = totalDays;
-            document.getElementById('statTotalHours').textContent = totalHours.toFixed(2);
-            document.getElementById('statAvgHours').textContent = avgHours;
-            document.getElementById('statEarliestIn').textContent = clockIns[0] || '--';
-            document.getElementById('statLatestOut').textContent = clockOuts[clockOuts.length - 1] || '--';
+            document.getElementById('statTotalHours').textContent = formatHours(totalHours);
+            document.getElementById('statAvgHours').textContent = formatHours(avgHours);
+            document.getElementById('statEarliestIn').textContent = earliestIn;
+            document.getElementById('statLatestOut').textContent = latestOut;
             
             // Update leave balance
             const { balance, taken } = calculateLeaveBalance(currentEmployee.id, currentEmployee.name);
             
-            // Update leave balance cards
-            updateLeaveCard('annual', balance['Annual Leave'], taken['Annual Leave'], LEAVE_QUOTAS['Annual Leave']);
-            updateLeaveCard('casual', balance['Casual Leave'], taken['Casual Leave'], LEAVE_QUOTAS['Casual Leave']);
-            updateLeaveCard('sick', balance['Sick Leave'], taken['Sick Leave'], LEAVE_QUOTAS['Sick Leave']);
-            updateLeaveCard('marriage', balance['Marriage Leave'], taken['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave']);
+            updateLeaveCard('annual', balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave']);
+            updateLeaveCard('casual', balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave']);
+            updateLeaveCard('sick', balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave']);
+            updateLeaveCard('marriage', balance['Marriage Leave'], LEAVE_QUOTAS['Marriage Leave']);
+            
+            // Update attendance table
+            const attendanceTableBody = document.getElementById('attendanceTableBody');
+            if (filtered.length === 0) {
+                attendanceTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #6c757d;">No attendance records found</td>
+                    </tr>
+                `;
+            } else {
+                attendanceTableBody.innerHTML = filtered.sort((a, b) => b.date.localeCompare(a.date)).map(record => `
+                    <tr>
+                        <td>${record.date}</td>
+                        <td>${record.clockIn}</td>
+                        <td>${record.clockOut}</td>
+                        <td>${record.totalHours}</td>
+                    </tr>
+                `).join('');
+            }
             
             // Update leave history table
             const employeeLeaves = leaveData.filter(l => 
                 l.id === currentEmployee.id && l.name === currentEmployee.name
-            ).sort((a, b) => b.startDate.localeCompare(a.startDate));
+            );
             
-            const leaveHistoryBody = document.getElementById('leaveHistoryTableBody');
+            const leaveHistoryTableBody = document.getElementById('leaveHistoryTableBody');
             if (employeeLeaves.length === 0) {
-                leaveHistoryBody.innerHTML = `
+                leaveHistoryTableBody.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align: center; color: #6c757d;">No leave records found</td>
                     </tr>
                 `;
             } else {
-                leaveHistoryBody.innerHTML = employeeLeaves.map(leave => {
+                leaveHistoryTableBody.innerHTML = employeeLeaves.map(leave => {
                     const badgeClass = leave.leaveType.toLowerCase().replace(' ', '-');
                     return `
                         <tr>
                             <td><span class="leave-badge ${badgeClass}">${leave.leaveType}</span></td>
-                            <td>${leave.startDate || 'N/A'}</td>
-                            <td>${leave.endDate || 'N/A'}</td>
-                            <td><strong>${leave.totalDays} ${leave.totalDays === 1 ? 'day' : 'days'}</strong></td>
+                            <td>${leave.startDate}</td>
+                            <td>${leave.endDate}</td>
+                            <td>${leave.totalDays} day${leave.totalDays !== 1 ? 's' : ''}</td>
                         </tr>
                     `;
                 }).join('');
             }
-            
-            // Update attendance table
-            const tbody = document.getElementById('attendanceTableBody');
-            tbody.innerHTML = records.map(r => `
-                <tr>
-                    <td>${r.date || 'N/A'}</td>
-                    <td>${r.clockIn}</td>
-                    <td>${r.clockOut}</td>
-                    <td><strong>${r.totalHours}</strong></td>
-                </tr>
-            `).join('');
         }
 
-        // Update individual leave card
-        function updateLeaveCard(type, remaining, taken, total) {
-            const remainingEl = document.getElementById(`${type}Remaining`);
-            const progressEl = document.getElementById(`${type}Progress`);
-            
-            remainingEl.textContent = remaining.toFixed(1);
-            
+        // Update leave card
+        function updateLeaveCard(type, remaining, total) {
+            document.getElementById(`${type}Remaining`).textContent = remaining;
             const percentage = (remaining / total) * 100;
-            progressEl.style.width = `${percentage}%`;
-            
-            // Change color based on remaining percentage
-            if (percentage <= 20) {
-                remainingEl.style.color = '#dc2626';
-                progressEl.style.background = 'linear-gradient(90deg, #dc2626 0%, #ef4444 100%)';
-            } else if (percentage <= 50) {
-                remainingEl.style.color = '#d97706';
-                progressEl.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)';
-            } else {
-                remainingEl.style.color = '#16a34a';
-                progressEl.style.background = 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)';
-            }
+            document.getElementById(`${type}Progress`).style.width = `${percentage}%`;
         }
 
-        // Setup auto-refresh
-        function setupAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-            
-            // Refresh every 5 minutes
-            autoRefreshInterval = setInterval(() => {
-                loadGoogleSheetData();
-            }, 300000);
-        }
-
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
+        // Initialize: Load data on page load
+        window.addEventListener('load', function() {
             loadGoogleSheetData();
-            setupAutoRefresh();
+            
+            // Set up auto-refresh every 5 minutes (300000 milliseconds)
+            autoRefreshInterval = setInterval(loadGoogleSheetData, 300000);
         });
 
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
+        // Clean up interval when page is closed
+        window.addEventListener('beforeunload', function() {
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
             }
