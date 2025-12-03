@@ -1139,10 +1139,30 @@
             return result;
         }
 
-        // Process sheet data - FIXED VERSION to properly extract Clock Out and Total Hours
+        // Process sheet data - COMPLETELY REWRITTEN to fix Clock Out and Total Hours extraction
         function processSheetData(data) {
             const attendance = [];
             const leaves = [];
+            
+            // First pass - identify all date columns by their pattern
+            const sampleRow = data[0];
+            const allKeys = Object.keys(sampleRow);
+            const dateColumns = [];
+            
+            for (let i = 0; i < allKeys.length; i++) {
+                const key = allKeys[i];
+                // Match date pattern like "2-Nov-2025"
+                if (key.match(/^\d{1,2}-[A-Za-z]{3}-\d{4}$/)) {
+                    dateColumns.push({
+                        index: i,
+                        dateColumn: key,
+                        clockOutColumn: allKeys[i + 1] || null,  // Next column should be clock out
+                        totalHoursColumn: allKeys[i + 2] || null  // Column after that should be total hours
+                    });
+                }
+            }
+            
+            console.log('Identified date columns:', dateColumns);
             
             data.forEach(row => {
                 const employeeName = row['Name'] || '';
@@ -1168,58 +1188,33 @@
                     });
                 }
                 
-                // Process attendance data from date columns
-                const allKeys = Object.keys(row);
-                
-                for (let i = 0; i < allKeys.length; i++) {
-                    const key = allKeys[i];
+                // Process attendance data using identified date columns
+                dateColumns.forEach(col => {
+                    const clockIn = row[col.dateColumn] || '';
                     
-                    // Check if column name is a date (e.g., "2-Nov-2025")
-                    if (key.match(/^\d{1,2}-[A-Za-z]{3}-\d{4}$/)) {
-                        const clockIn = row[key];
-                        
-                        // Skip if no clock in time
-                        if (!clockIn || clockIn.trim() === '' || clockIn === '0:00:00') {
-                            continue;
-                        }
-                        
-                        // Find the Clock Out column - it should be the next column after the date
-                        let clockOut = 'N/A';
-                        let totalHours = 'N/A';
-                        
-                        // Look at the next few columns
-                        for (let j = i + 1; j < Math.min(i + 3, allKeys.length); j++) {
-                            const nextKey = allKeys[j];
-                            const nextValue = row[nextKey] || '';
-                            
-                            // Check if it's a Clock Out column (usually appears right after date)
-                            if (nextKey.toLowerCase().includes('clock') || 
-                                nextKey.toLowerCase() === 'clock out' ||
-                                (j === i + 1 && nextValue && nextValue.match(/^\d{1,2}:\d{2}(:\d{2})?( [AP]M)?$/))) {
-                                clockOut = nextValue || 'N/A';
-                            }
-                            
-                            // Check if it's a Total Hour column
-                            if (nextKey.toLowerCase().includes('total') || 
-                                nextKey.toLowerCase() === 'total hour' ||
-                                nextKey.toLowerCase() === 'total hours') {
-                                totalHours = nextValue || 'N/A';
-                            }
-                        }
-                        
-                        // Add the attendance record
-                        attendance.push({
-                            name: employeeName,
-                            id: employeeId,
-                            date: formatDate(key),
-                            clockIn: clockIn,
-                            clockOut: clockOut,
-                            totalHours: totalHours
-                        });
-                        
-                        console.log(`Added record: ${employeeName}, Date: ${key}, In: ${clockIn}, Out: ${clockOut}, Hours: ${totalHours}`);
+                    // Skip if no clock in time
+                    if (!clockIn || clockIn.trim() === '' || clockIn === '0:00:00') {
+                        return;
                     }
-                }
+                    
+                    // Get clock out from next column
+                    const clockOut = col.clockOutColumn ? (row[col.clockOutColumn] || 'N/A') : 'N/A';
+                    
+                    // Get total hours from column after clock out
+                    const totalHours = col.totalHoursColumn ? (row[col.totalHoursColumn] || 'N/A') : 'N/A';
+                    
+                    // Add the attendance record
+                    attendance.push({
+                        name: employeeName,
+                        id: employeeId,
+                        date: formatDate(col.dateColumn),
+                        clockIn: clockIn,
+                        clockOut: clockOut && clockOut !== '0:00:00' ? clockOut : 'N/A',
+                        totalHours: totalHours && totalHours !== '0:00:00' ? totalHours : 'N/A'
+                    });
+                    
+                    console.log(`Added record: ${employeeName}, Date: ${col.dateColumn}, In: ${clockIn}, Out: ${clockOut}, Hours: ${totalHours}`);
+                });
             });
             
             return { attendance, leaves };
