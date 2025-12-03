@@ -1075,7 +1075,7 @@
                             <li><strong>Step 1:</strong> Make sure the Google Sheet is shared as <strong>"Anyone with the link can view"</strong></li>
                             <li><strong>Step 2:</strong> Verify the Sheet ID in the code matches your sheet</li>
                             <li><strong>Step 3:</strong> Check your internet connection</li>
-                            <li><strong>Required Columns:</strong> Name, Employee ID, Date columns (e.g., 2-Nov-2025), Total Hour columns, Type of Leave, Start Date of Leave, End Date of Leave, Total Leave Days</li>
+                            <li><strong>Required Columns:</strong> Name, Employee ID, Date columns (e.g., 2-Nov-2025), Clock Out columns, Total Hour columns, Type of Leave, Start Date of Leave, End Date of Leave, Total Leave Days</li>
                         </ul>
                         <button onclick="loadGoogleSheetData()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
                             🔄 Try Again
@@ -1139,7 +1139,7 @@
             return result;
         }
 
-        // Process sheet data - extract attendance records from date columns
+        // Process sheet data - FIXED VERSION to properly extract Clock Out and Total Hours
         function processSheetData(data) {
             const attendance = [];
             const leaves = [];
@@ -1169,49 +1169,57 @@
                 }
                 
                 // Process attendance data from date columns
-                Object.keys(row).forEach(key => {
+                const allKeys = Object.keys(row);
+                
+                for (let i = 0; i < allKeys.length; i++) {
+                    const key = allKeys[i];
+                    
                     // Check if column name is a date (e.g., "2-Nov-2025")
                     if (key.match(/^\d{1,2}-[A-Za-z]{3}-\d{4}$/)) {
                         const clockIn = row[key];
-                        const totalHourKey = Object.keys(row).find(k => 
-                            k === 'Total Hour' && 
-                            Object.keys(row).indexOf(k) === Object.keys(row).indexOf(key) + 1
-                        );
                         
-                        // Find the next occurrence of "Total Hour" after this date
-                        const keyIndex = Object.keys(row).indexOf(key);
-                        let totalHours = '';
-                        let clockOut = '';
+                        // Skip if no clock in time
+                        if (!clockIn || clockIn.trim() === '' || clockIn === '0:00:00') {
+                            continue;
+                        }
                         
-                        // Look for Clock Out in the next column
-                        if (keyIndex + 1 < Object.keys(row).length) {
-                            const nextKey = Object.keys(row)[keyIndex + 1];
-                            if (nextKey === 'Clock Out' || nextKey.includes('Clock')) {
-                                clockOut = row[nextKey];
+                        // Find the Clock Out column - it should be the next column after the date
+                        let clockOut = 'N/A';
+                        let totalHours = 'N/A';
+                        
+                        // Look at the next few columns
+                        for (let j = i + 1; j < Math.min(i + 3, allKeys.length); j++) {
+                            const nextKey = allKeys[j];
+                            const nextValue = row[nextKey] || '';
+                            
+                            // Check if it's a Clock Out column (usually appears right after date)
+                            if (nextKey.toLowerCase().includes('clock') || 
+                                nextKey.toLowerCase() === 'clock out' ||
+                                (j === i + 1 && nextValue && nextValue.match(/^\d{1,2}:\d{2}(:\d{2})?( [AP]M)?$/))) {
+                                clockOut = nextValue || 'N/A';
+                            }
+                            
+                            // Check if it's a Total Hour column
+                            if (nextKey.toLowerCase().includes('total') || 
+                                nextKey.toLowerCase() === 'total hour' ||
+                                nextKey.toLowerCase() === 'total hours') {
+                                totalHours = nextValue || 'N/A';
                             }
                         }
                         
-                        // Look for Total Hour in nearby columns
-                        for (let i = keyIndex + 1; i < keyIndex + 5 && i < Object.keys(row).length; i++) {
-                            const checkKey = Object.keys(row)[i];
-                            if (checkKey === 'Total Hour' || checkKey.includes('Total')) {
-                                totalHours = row[checkKey];
-                                break;
-                            }
-                        }
+                        // Add the attendance record
+                        attendance.push({
+                            name: employeeName,
+                            id: employeeId,
+                            date: formatDate(key),
+                            clockIn: clockIn,
+                            clockOut: clockOut,
+                            totalHours: totalHours
+                        });
                         
-                        if (clockIn && clockIn.trim() && clockIn !== '0:00:00') {
-                            attendance.push({
-                                name: employeeName,
-                                id: employeeId,
-                                date: formatDate(key),
-                                clockIn: clockIn,
-                                clockOut: clockOut || 'N/A',
-                                totalHours: totalHours || 'N/A'
-                            });
-                        }
+                        console.log(`Added record: ${employeeName}, Date: ${key}, In: ${clockIn}, Out: ${clockOut}, Hours: ${totalHours}`);
                     }
-                });
+                }
             });
             
             return { attendance, leaves };
@@ -1416,12 +1424,20 @@
                 return hours + (minutes / 60) + (seconds / 3600);
             }
             
+            // Check if it's in HH:MM format
+            if (parts.length === 2) {
+                const hours = parseInt(parts[0]) || 0;
+                const minutes = parseInt(parts[1]) || 0;
+                return hours + (minutes / 60);
+            }
+            
             // Otherwise try to parse as decimal
             return parseFloat(timeStr) || 0;
         }
 
         // Format hours to HH:MM display
         function formatHours(totalHours) {
+            if (totalHours === 0) return '0h 0m';
             const hours = Math.floor(totalHours);
             const minutes = Math.round((totalHours - hours) * 60);
             return `${hours}h ${minutes}m`;
@@ -1560,7 +1576,7 @@
             const avgHours = totalDays > 0 ? totalHours / totalDays : 0;
             
             const clockInTimes = filtered.map(r => r.clockIn).filter(t => t && t !== 'N/A');
-            const clockOutTimes = filtered.map(r => r.clockOut).filter(t => t && t !== 'N/A');
+            const clockOutTimes = filtered.map(r => r.clockOut).filter(t => t && t !== 'N/A' && t !== '0:00:00');
             
             const earliestIn = clockInTimes.length > 0 ? clockInTimes.sort()[0] : '--';
             const latestOut = clockOutTimes.length > 0 ? clockOutTimes.sort().reverse()[0] : '--';
