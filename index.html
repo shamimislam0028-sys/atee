@@ -139,49 +139,20 @@
             transform: none;
         }
 
-        .auth-divider {
-            text-align: center;
-            margin: 25px 0;
-            position: relative;
-        }
-
-        .auth-divider::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 100%;
-            height: 1px;
-            background: #e9ecef;
-        }
-
-        .auth-divider span {
-            background: white;
-            padding: 0 15px;
-            position: relative;
-            color: #6c757d;
+        .forgot-password-link {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            color: #354894;
             font-size: 14px;
-        }
-
-        .google-signin-btn {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            text-decoration: none;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             transition: all 0.3s;
         }
 
-        .google-signin-btn:hover {
-            border-color: #354894;
-            background: #f8f9fa;
+        .forgot-password-link:hover {
+            color: #CF278D;
+            text-decoration: underline;
         }
 
         .error-message {
@@ -983,6 +954,7 @@
                 <button type="submit" class="auth-button" id="loginBtn">
                     🔐 Sign In
                 </button>
+                <a class="forgot-password-link" onclick="showPasswordReset()">Forgot Password?</a>
             </form>
 
             <!-- Signup Form -->
@@ -1023,20 +995,6 @@
                     ✨ Create Account
                 </button>
             </form>
-
-            <div class="auth-divider">
-                <span>or continue with</span>
-            </div>
-
-            <button class="google-signin-btn" onclick="handleGoogleSignIn()">
-                <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
-                    <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
-                    <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
-                    <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
-                </svg>
-                Sign in with Google
-            </button>
         </div>
     </div>
 
@@ -1452,13 +1410,16 @@
                     displayName: name
                 });
                 
-                // Store user data in Firestore
+                // Store user data in Firestore with role-based access control
                 await db.collection('users').doc(user.uid).set({
                     name: name,
                     employeeId: employeeId,
                     email: email,
                     role: role,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    isAdmin: role === 'admin',  // Custom claim simulation
+                    isActive: true,  // Account status
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 showAuthMessage('Account created successfully! Redirecting...', 'success');
@@ -1527,37 +1488,39 @@
             }
         }
 
-        // Handle Google Sign-In
-        async function handleGoogleSignIn() {
-            const provider = new firebase.auth.GoogleAuthProvider();
+        // Show password reset dialog
+        function showPasswordReset() {
+            const email = prompt('🔑 Password Reset\n\nEnter your email address to receive a password reset link:');
             
+            if (email && email.trim()) {
+                handlePasswordReset(email.trim());
+            }
+        }
+
+        // Handle password reset
+        async function handlePasswordReset(email) {
             try {
-                const result = await auth.signInWithPopup(provider);
-                const user = result.user;
+                await auth.sendPasswordResetEmail(email);
+                showAuthMessage('✅ Password reset email sent successfully! Please check your inbox and spam folder.', 'success');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                let errorMessage = 'Failed to send password reset email. ';
                 
-                // Check if user profile exists
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                
-                if (!userDoc.exists) {
-                    // New user - prompt for additional info
-                    const employeeId = prompt('Please enter your Employee ID:');
-                    const role = confirm('Are you an Admin? Click OK for Admin, Cancel for Employee') ? 'admin' : 'employee';
-                    
-                    if (employeeId) {
-                        await db.collection('users').doc(user.uid).set({
-                            name: user.displayName,
-                            employeeId: employeeId,
-                            email: user.email,
-                            role: role,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'No account found with this email address.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email address format.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage += 'Too many attempts. Please try again later.';
+                        break;
+                    default:
+                        errorMessage += error.message;
                 }
                 
-                // Will automatically trigger onAuthStateChanged
-            } catch (error) {
-                console.error('Google sign-in error:', error);
-                showAuthMessage('Google sign-in failed: ' + error.message);
+                showAuthMessage(errorMessage);
             }
         }
 
@@ -1573,7 +1536,7 @@
             }
         }
 
-        // Monitor auth state changes
+        // Monitor auth state changes with custom claims validation
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // User is signed in
@@ -1581,11 +1544,36 @@
                     const userDoc = await db.collection('users').doc(user.uid).get();
                     
                     if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        // Check if account is active (custom claim validation)
+                        if (userData.isActive === false) {
+                            showAuthMessage('⚠️ Your account has been deactivated. Please contact administrator.');
+                            await auth.signOut();
+                            return;
+                        }
+                        
+                        // Update last login timestamp
+                        await db.collection('users').doc(user.uid).update({
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
                         currentUser = {
                             uid: user.uid,
                             email: user.email,
-                            ...userDoc.data()
+                            ...userData
                         };
+                        
+                        // Validate admin role with custom claims simulation
+                        if (currentUser.role === 'admin' && !currentUser.isAdmin) {
+                            console.warn('Role mismatch detected. Updating isAdmin flag.');
+                            await db.collection('users').doc(user.uid).update({
+                                isAdmin: true
+                            });
+                            currentUser.isAdmin = true;
+                        }
+                        
+                        console.log('User authenticated with role:', currentUser.role, '| isAdmin:', currentUser.isAdmin);
                         
                         // Show main app
                         document.getElementById('authContainer').style.display = 'none';
@@ -1594,7 +1582,7 @@
                         // Update UI with user info
                         updateUserUI();
                         
-                        // Load data
+                        // Load data based on role permissions
                         await loadGoogleSheetData();
                         
                         // Start auto-refresh
@@ -1606,7 +1594,7 @@
                     }
                 } catch (error) {
                     console.error('Error loading user data:', error);
-                    showAuthMessage('Failed to load user profile');
+                    showAuthMessage('Failed to load user profile: ' + error.message);
                 }
             } else {
                 // User is signed out
@@ -1641,11 +1629,14 @@
             roleBadge.textContent = currentUser.role;
             roleBadge.className = `role-badge ${currentUser.role}`;
             
-            // Update access level info
-            const accessText = currentUser.role === 'admin' 
-                ? 'You have full access to all employee records' 
-                : 'You can view your own attendance and leave records';
+            // Update access level info with admin verification
+            const accessText = (currentUser.role === 'admin' && currentUser.isAdmin)
+                ? '👑 Admin Access: You have full access to all employee records' 
+                : '👤 Employee Access: You can view your own attendance and leave records';
             document.getElementById('accessLevelText').textContent = accessText;
+            
+            // Log access level for debugging
+            console.log('Access Level:', currentUser.role, '| isAdmin flag:', currentUser.isAdmin);
             
             // Hide/show search for employees
             if (currentUser.role === 'employee') {
