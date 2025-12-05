@@ -1377,6 +1377,16 @@
                 </div>
             </div>
 
+            <!-- Request Admin Access Section (for Employee Dashboard) -->
+            <div id="dashboardRequestAdminSection" class="instructions" style="display: none; margin: 20px 30px;">
+                <h3>👑 Admin Access</h3>
+                <p style="color: #4338ca; margin-bottom: 15px;">Want to manage all employee data? Request admin access from your administrator.</p>
+                <button class="request-admin-btn" id="dashboardRequestAdminBtn" onclick="requestAdminAccess()">
+                    👑 Request Admin Access
+                </button>
+                <p id="dashboardRequestStatus" style="text-align: center; margin-top: 10px; font-size: 14px; color: #6c757d;"></p>
+            </div>
+
             <!-- Attendance Stats -->
             <div class="dashboard-stats">
                 <div class="stat-card">
@@ -1864,14 +1874,10 @@
                             );
                             
                             if (employeeRecord) {
-                                showEmployeeDashboard(employeeRecord);
+                                showDashboard(employeeRecord.employeeId, employeeRecord.name);
                             } else {
                                 // If no attendance data yet, still show dashboard with empty state
-                                showEmployeeDashboard({
-                                    employeeId: currentUser.employeeId,
-                                    name: currentUser.name,
-                                    records: []
-                                });
+                                showDashboard(currentUser.employeeId, currentUser.name);
                             }
                         }
                         
@@ -1942,30 +1948,39 @@
             const requestSection = document.getElementById('requestAdminSection');
             const requestBtn = document.getElementById('requestAdminBtn');
             const requestStatus = document.getElementById('requestStatus');
+            const dashboardRequestSection = document.getElementById('dashboardRequestAdminSection');
+            const dashboardRequestBtn = document.getElementById('dashboardRequestAdminBtn');
+            const dashboardRequestStatus = document.getElementById('dashboardRequestStatus');
             const notificationsBtn = document.getElementById('adminNotificationsBtn');
             
             if (currentUser.role === 'admin' && currentUser.isAdmin) {
                 // Show notifications button for admins
                 notificationsBtn.style.display = 'block';
-                requestSection.style.display = 'none';
+                if (requestSection) requestSection.style.display = 'none';
+                if (dashboardRequestSection) dashboardRequestSection.style.display = 'none';
                 
                 // Load and display pending requests count
                 loadAdminNotifications();
             } else if (currentUser.role === 'employee') {
-                // Show request admin button for employees
-                requestSection.style.display = 'block';
+                // Hide request admin button from list view (moved to dashboard)
+                if (requestSection) requestSection.style.display = 'none';
                 notificationsBtn.style.display = 'none';
                 
-                // Check if request is pending
-                if (currentUser.adminRequestPending) {
-                    requestBtn.disabled = true;
-                    requestBtn.innerHTML = '⏳ Request Pending';
-                    requestStatus.textContent = 'Your admin access request is awaiting approval';
-                    requestStatus.style.color = '#d97706';
-                } else {
-                    requestBtn.disabled = false;
-                    requestBtn.innerHTML = '👑 Request Admin Access';
-                    requestStatus.textContent = '';
+                // Show request admin button in dashboard
+                if (dashboardRequestSection) {
+                    dashboardRequestSection.style.display = 'block';
+                    
+                    // Check if request is pending
+                    if (currentUser.adminRequestPending) {
+                        dashboardRequestBtn.disabled = true;
+                        dashboardRequestBtn.innerHTML = '⏳ Request Pending';
+                        dashboardRequestStatus.textContent = 'Your admin access request is awaiting approval';
+                        dashboardRequestStatus.style.color = '#d97706';
+                    } else {
+                        dashboardRequestBtn.disabled = false;
+                        dashboardRequestBtn.innerHTML = '👑 Request Admin Access';
+                        dashboardRequestStatus.textContent = '';
+                    }
                 }
             }
         }
@@ -1974,8 +1989,9 @@
         async function requestAdminAccess() {
             if (!currentUser || currentUser.role !== 'employee') return;
             
-            const requestBtn = document.getElementById('requestAdminBtn');
-            const requestStatus = document.getElementById('requestStatus');
+            // Try both button IDs (one for list view, one for dashboard)
+            const requestBtn = document.getElementById('requestAdminBtn') || document.getElementById('dashboardRequestAdminBtn');
+            const requestStatus = document.getElementById('requestStatus') || document.getElementById('dashboardRequestStatus');
             
             if (confirm('Request admin access? An administrator will review your request.')) {
                 try {
@@ -1999,13 +2015,34 @@
                     
                     currentUser.adminRequestPending = true;
                     
-                    requestBtn.innerHTML = '⏳ Request Pending';
-                    requestStatus.textContent = 'Your admin access request has been sent successfully!';
-                    requestStatus.style.color = '#16a34a';
+                    // Update both buttons if they exist
+                    const dashboardBtn = document.getElementById('dashboardRequestAdminBtn');
+                    const listBtn = document.getElementById('requestAdminBtn');
+                    const dashboardStatus = document.getElementById('dashboardRequestStatus');
+                    const listStatus = document.getElementById('requestStatus');
+                    
+                    if (requestBtn) requestBtn.innerHTML = '⏳ Request Pending';
+                    if (dashboardBtn) dashboardBtn.innerHTML = '⏳ Request Pending';
+                    if (listBtn) listBtn.innerHTML = '⏳ Request Pending';
+                    
+                    if (requestStatus) {
+                        requestStatus.textContent = 'Your admin access request has been sent successfully!';
+                        requestStatus.style.color = '#16a34a';
+                    }
                     
                     setTimeout(() => {
-                        requestStatus.textContent = 'Your admin access request is awaiting approval';
-                        requestStatus.style.color = '#d97706';
+                        if (requestStatus) {
+                            requestStatus.textContent = 'Your admin access request is awaiting approval';
+                            requestStatus.style.color = '#d97706';
+                        }
+                        if (dashboardStatus) {
+                            dashboardStatus.textContent = 'Your admin access request is awaiting approval';
+                            dashboardStatus.style.color = '#d97706';
+                        }
+                        if (listStatus) {
+                            listStatus.textContent = 'Your admin access request is awaiting approval';
+                            listStatus.style.color = '#d97706';
+                        }
                     }, 3000);
                 } catch (error) {
                     console.error('Error requesting admin access:', error);
