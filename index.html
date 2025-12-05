@@ -18,6 +18,200 @@
             padding: 20px;
         }
 
+        /* ========== AUTH STYLES ========== */
+        .auth-container {
+            max-width: 450px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #354894 0%, #CF278D 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .auth-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .auth-body {
+            padding: 40px 30px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #6c757d;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: #354894;
+            border-bottom-color: #CF278D;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #354894;
+            box-shadow: 0 0 0 3px rgba(53, 72, 148, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #354894 0%, #CF278D 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(53, 72, 148, 0.3);
+        }
+
+        .auth-button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .auth-divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .google-signin-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .google-signin-btn:hover {
+            border-color: #354894;
+            background: #f8f9fa;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        /* ========== MAIN SYSTEM STYLES ========== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -25,6 +219,11 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: none;
+        }
+
+        .container.active {
+            display: block;
         }
 
         .header {
@@ -40,10 +239,56 @@
             margin-bottom: 10px;
         }
 
-        .auto-refresh-indicator {
+        .user-info-bar {
             position: absolute;
             top: 20px;
             right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            color: #354894;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #354894;
+        }
+
+        .auto-refresh-indicator {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -51,6 +296,7 @@
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 14px;
+            margin-top: 15px;
         }
 
         .refresh-dot {
@@ -82,7 +328,7 @@
 
         .back-button:hover {
             background: white;
-            color: #CF278D;
+            color: #354894;
         }
 
         .status-section {
@@ -134,7 +380,7 @@
         }
 
         .refresh-button:hover {
-            background: #CF278D;
+            background: #b01f75;
             transform: translateY(-2px);
         }
 
@@ -178,8 +424,8 @@
 
         .filter-select:focus, .filter-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #354894;
+            box-shadow: 0 0 0 3px rgba(53, 72, 148, 0.1);
         }
 
         .search-section {
@@ -198,8 +444,8 @@
 
         .search-box:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #354894;
+            box-shadow: 0 0 0 3px rgba(53, 72, 148, 0.1);
         }
 
         .profiles-section {
@@ -222,7 +468,7 @@
         .profile-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-color: #667eea;
+            border-color: #354894;
         }
 
         .profile-header {
@@ -319,7 +565,6 @@
             margin-top: 10px;
         }
 
-        /* Leave Balance Section */
         .leave-balance-section {
             background: #f8f9fa;
             padding: 15px;
@@ -374,7 +619,6 @@
             color: #16a34a;
         }
 
-        /* Individual Dashboard Styles */
         .dashboard-view {
             display: none;
         }
@@ -445,7 +689,6 @@
             color: #2d3748;
         }
 
-        /* Leave Balance Dashboard Cards */
         .leave-balance-grid {
             padding: 30px;
             display: grid;
@@ -597,11 +840,6 @@
             color: #991b1b;
         }
 
-        .leave-badge.marriage {
-            background: #fce7f3;
-            color: #831843;
-        }
-
         .leave-badge.work-from-home {
             background: #dbeafe;
             color: #1e40af;
@@ -621,7 +859,7 @@
 
         .instructions {
             background: #e0e7ff;
-            border: 2px solid #667eea;
+            border: 2px solid #354894;
             border-radius: 8px;
             padding: 20px;
             margin: 20px 30px;
@@ -659,6 +897,26 @@
             to { transform: rotate(360deg); }
         }
 
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-badge.admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-badge.employee {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
         @media (max-width: 768px) {
             .profiles-section {
                 grid-template-columns: 1fr;
@@ -673,10 +931,10 @@
                 grid-template-columns: 1fr;
             }
 
-            .auto-refresh-indicator {
+            .user-info-bar {
                 position: static;
-                margin-top: 15px;
                 justify-content: center;
+                margin-top: 15px;
             }
 
             .leave-items {
@@ -686,17 +944,120 @@
             .leave-balance-grid {
                 grid-template-columns: 1fr;
             }
+
+            .auth-container {
+                margin: 20px auto;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- ========== AUTHENTICATION SCREEN ========== -->
+    <div id="authContainer" class="auth-container">
+        <div class="auth-header">
+            <h1>🏢 Employee Profile System</h1>
+            <p>Attendance & Leave Management Portal</p>
+        </div>
+        
+        <div class="auth-body">
+            <div id="authError" class="error-message"></div>
+            <div id="authSuccess" class="success-message"></div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your.email@company.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="auth-button" id="loginBtn">
+                    🔐 Sign In
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" class="form-input" id="signupEmployeeId" placeholder="EMP001" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your.email@company.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Create a strong password" required>
+                    <div class="password-requirements">
+                        Minimum 6 characters required
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="signupRole" required>
+                        <option value="">Select Your Role</option>
+                        <option value="employee">Employee - View My Records</option>
+                        <option value="admin">Admin - View All Records</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="auth-button" id="signupBtn">
+                    ✨ Create Account
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+
+            <button class="google-signin-btn" onclick="handleGoogleSignIn()">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
+                    <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
+                    <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
+                    <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
+                </svg>
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== MAIN APPLICATION ========== -->
+    <div class="container" id="mainContainer">
         <!-- Main List View -->
         <div id="listView">
             <div class="header">
+                <div class="user-info-bar">
+                    <div class="user-badge">
+                        <div class="user-avatar-small" id="userAvatarSmall"></div>
+                        <span id="userNameDisplay"></span>
+                        <span class="role-badge" id="userRoleBadge"></span>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()">
+                        🚪 Logout
+                    </button>
+                </div>
                 <h1>🏢 Employee Profile System</h1>
                 <p>Attendance & Leave Management - Auto-Updating from Google Sheets</p>
-                <div class="auto-refresh-indicator">
+                <div class="auto-refresh-indicator" style="margin: 15px auto 0; width: fit-content;">
                     <div class="refresh-dot"></div>
                     <span>Auto-refresh every 5 minutes</span>
                 </div>
@@ -705,12 +1066,12 @@
             <div class="instructions">
                 <h3>📋 System Information:</h3>
                 <ul>
-                    <li>📊 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
-                    <li>🔄 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
-                    <li>🗂️ <strong>Leave Management:</strong> Track Annual, Casual, Sick leave balances and Work From Home days</li>
-                    <li>📅 <strong>Half-Day Leave:</strong> Two 0.5-day leaves automatically counted as 1 full day</li>
-                    <li>🔍 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
+                    <li>🔄 <strong>Auto-Update Enabled:</strong> Data automatically syncs from Google Sheets every 5 minutes</li>
+                    <li>🔃 <strong>Manual Refresh:</strong> Click the "Refresh Data" button to update immediately</li>
+                    <li>📊 <strong>Leave Management:</strong> Track Annual, Casual, Sick leave balances and Work From Home days</li>
+                    <li>📅 <strong>Advanced Filtering:</strong> Filter by year, month, or specific day with search functionality</li>
                     <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance & leave history</li>
+                    <li id="roleAccessInfo">🔒 <strong>Access Level:</strong> <span id="accessLevelText"></span></li>
                 </ul>
             </div>
 
@@ -771,13 +1132,13 @@
                 </div>
             </div>
 
-            <div class="search-section">
+            <div class="search-section" id="searchSection">
                 <input type="text" id="searchBox" class="search-box" placeholder="🔍 Search by Employee ID or Name...">
             </div>
 
             <div class="profiles-section" id="profilesContainer">
                 <div class="no-data">
-                    <div class="no-data-icon">⏳</div>
+                    <div class="no-data-icon">📊</div>
                     <h2>Loading Data...</h2>
                     <p>Fetching employee data from Google Sheets</p>
                 </div>
@@ -788,6 +1149,11 @@
         <div id="dashboardView" class="dashboard-view">
             <div class="header">
                 <button class="back-button" onclick="showListView()">← Back to List</button>
+                <div class="user-info-bar">
+                    <button class="logout-btn" onclick="handleLogout()">
+                        🚪 Logout
+                    </button>
+                </div>
                 <h1>Employee Dashboard</h1>
                 <div class="dashboard-employee-info">
                     <div class="dashboard-avatar" id="dashboardAvatar"></div>
@@ -861,7 +1227,7 @@
                     <div class="stat-value" id="statEarliestIn">--</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🌆</div>
+                    <div class="stat-icon">🌙</div>
                     <div class="stat-label">Latest Clock Out</div>
                     <div class="stat-value" id="statLatestOut">--</div>
                 </div>
@@ -885,7 +1251,7 @@
 
                 <div class="leave-stat-card">
                     <div class="leave-stat-header">
-                        <div class="leave-stat-icon">📋</div>
+                        <div class="leave-stat-icon">📅</div>
                         <div class="leave-stat-type">Casual Leave</div>
                     </div>
                     <div class="leave-stat-numbers">
@@ -899,7 +1265,7 @@
 
                 <div class="leave-stat-card">
                     <div class="leave-stat-header">
-                        <div class="leave-stat-icon">🏥</div>
+                        <div class="leave-stat-icon">🤒</div>
                         <div class="leave-stat-type">Sick Leave</div>
                     </div>
                     <div class="leave-stat-numbers">
@@ -928,15 +1294,15 @@
 
             <!-- Leave History -->
             <div class="leave-history-section">
-                <h2 class="leave-history-title">📅 Leave History</h2>
+                <h2 class="leave-history-title">📋 Leave History</h2>
                 <div class="leave-history-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>📅 Leave Type</th>
-                                <th>📆 Start Date</th>
-                                <th>📆 End Date</th>
-                                <th>📊 Days</th>
+                                <th>📝 Leave Type</th>
+                                <th>📅 Start Date</th>
+                                <th>📅 End Date</th>
+                                <th>🔢 Days</th>
                             </tr>
                         </thead>
                         <tbody id="leaveHistoryTableBody">
@@ -950,15 +1316,15 @@
 
             <!-- Attendance Records -->
             <div class="attendance-table">
-                <h2 style="margin-bottom: 20px;">📋 Attendance Records</h2>
+                <h2 style="margin-bottom: 20px;">📊 Attendance Records</h2>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>📅 Date</th>
-                                <th>🌅 Clock In</th>
-                                <th>🌆 Clock Out</th>
-                                <th>⏰ Total Hours</th>
+                                <th>🕐 Clock In</th>
+                                <th>🕐 Clock Out</th>
+                                <th>⏱️ Total Hours</th>
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
@@ -969,10 +1335,34 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <script>
+        // ========== FIREBASE CONFIGURATION ==========
+        // 🔥 IMPORTANT: Replace with your Firebase project configuration
+        // Get this from Firebase Console > Project Settings > Your Apps
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDBqeu_Y0SKkYBsXiAI-ljsMNU-8oyxWY",
+            authDomain: "employee-profile-system-32630.firebaseapp.com",
+            projectId: "employee-profile-system-32630",
+            storageBucket: "employee-profile-system-32630.firebasestorage.app",
+            messagingSenderId: "610142950182",
+            appId: "1:610142950182:web:163d40d70f680030d6a7e7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ========== GLOBAL STATE ==========
         let employeeData = [];
         let leaveData = [];
         let currentEmployee = null;
+        let currentUser = null;
         let autoRefreshInterval = null;
 
         // Leave balance configuration
@@ -986,19 +1376,293 @@
         // Google Sheets Configuration
         const SHEET_ID = '1Kvrf6CZcq45s4-fhOOvU9Ws6ps-wte527xaWZ-p2hqc';
         const SHEET_NAME = 'Sheet1';
+
+        // ========== AUTHENTICATION FUNCTIONS ==========
+        
+        // Switch between login and signup tabs
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                tabs[0].classList.add('active');
+            } else {
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+                tabs[1].classList.add('active');
+            }
+            
+            clearAuthMessages();
+        }
+
+        // Show auth message
+        function showAuthMessage(message, type = 'error') {
+            const errorDiv = document.getElementById('authError');
+            const successDiv = document.getElementById('authSuccess');
+            
+            if (type === 'error') {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            } else {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+            }
+            
+            setTimeout(clearAuthMessages, 5000);
+        }
+
+        function clearAuthMessages() {
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authSuccess').style.display = 'none';
+        }
+
+        // Handle user signup
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const employeeId = document.getElementById('signupEmployeeId').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const role = document.getElementById('signupRole').value;
+            
+            if (!role) {
+                showAuthMessage('Please select a role');
+                return;
+            }
+            
+            const signupBtn = document.getElementById('signupBtn');
+            signupBtn.disabled = true;
+            signupBtn.textContent = '⏳ Creating Account...';
+            
+            try {
+                // Create user in Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Update display name
+                await user.updateProfile({
+                    displayName: name
+                });
+                
+                // Store user data in Firestore
+                await db.collection('users').doc(user.uid).set({
+                    name: name,
+                    employeeId: employeeId,
+                    email: email,
+                    role: role,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showAuthMessage('Account created successfully! Redirecting...', 'success');
+                
+                // Will automatically trigger onAuthStateChanged
+            } catch (error) {
+                console.error('Signup error:', error);
+                let errorMessage = 'Failed to create account. ';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'Email already registered.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'Password is too weak.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email address.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showAuthMessage(errorMessage);
+                signupBtn.disabled = false;
+                signupBtn.textContent = '✨ Create Account';
+            }
+        }
+
+        // Handle user login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Signing In...';
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                // Will automatically trigger onAuthStateChanged
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed. ';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage += 'Invalid email or password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email address.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage += 'Account has been disabled.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showAuthMessage(errorMessage);
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🔐 Sign In';
+            }
+        }
+
+        // Handle Google Sign-In
+        async function handleGoogleSignIn() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            try {
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+                
+                // Check if user profile exists
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // New user - prompt for additional info
+                    const employeeId = prompt('Please enter your Employee ID:');
+                    const role = confirm('Are you an Admin? Click OK for Admin, Cancel for Employee') ? 'admin' : 'employee';
+                    
+                    if (employeeId) {
+                        await db.collection('users').doc(user.uid).set({
+                            name: user.displayName,
+                            employeeId: employeeId,
+                            email: user.email,
+                            role: role,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // Will automatically trigger onAuthStateChanged
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                showAuthMessage('Google sign-in failed: ' + error.message);
+            }
+        }
+
+        // Handle logout
+        async function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('Failed to logout: ' + error.message);
+                }
+            }
+        }
+
+        // Monitor auth state changes
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // User is signed in
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        currentUser = {
+                            uid: user.uid,
+                            email: user.email,
+                            ...userDoc.data()
+                        };
+                        
+                        // Show main app
+                        document.getElementById('authContainer').style.display = 'none';
+                        document.getElementById('mainContainer').classList.add('active');
+                        
+                        // Update UI with user info
+                        updateUserUI();
+                        
+                        // Load data
+                        await loadGoogleSheetData();
+                        
+                        // Start auto-refresh
+                        startAutoRefresh();
+                    } else {
+                        // User doc doesn't exist
+                        showAuthMessage('User profile not found. Please sign up again.');
+                        await auth.signOut();
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                    showAuthMessage('Failed to load user profile');
+                }
+            } else {
+                // User is signed out
+                currentUser = null;
+                document.getElementById('authContainer').style.display = 'block';
+                document.getElementById('mainContainer').classList.remove('active');
+                
+                // Stop auto-refresh
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                }
+                
+                // Reset forms
+                document.getElementById('loginForm').reset();
+                document.getElementById('signupForm').reset();
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loginBtn').textContent = '🔐 Sign In';
+                document.getElementById('signupBtn').disabled = false;
+                document.getElementById('signupBtn').textContent = '✨ Create Account';
+            }
+        });
+
+        // Update user interface with current user info
+        function updateUserUI() {
+            if (!currentUser) return;
+            
+            const initial = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('userAvatarSmall').textContent = initial;
+            document.getElementById('userNameDisplay').textContent = currentUser.name;
+            
+            const roleBadge = document.getElementById('userRoleBadge');
+            roleBadge.textContent = currentUser.role;
+            roleBadge.className = `role-badge ${currentUser.role}`;
+            
+            // Update access level info
+            const accessText = currentUser.role === 'admin' 
+                ? 'You have full access to all employee records' 
+                : 'You can view your own attendance and leave records';
+            document.getElementById('accessLevelText').textContent = accessText;
+            
+            // Hide/show search for employees
+            if (currentUser.role === 'employee') {
+                document.getElementById('searchSection').style.display = 'none';
+            }
+        }
+
+        // ========== GOOGLE SHEETS DATA FUNCTIONS ==========
         
         function getGoogleSheetUrls() {
             return [
-                // Method 1: Direct CSV export
                 `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
-                // Method 2: Using gviz API
                 `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`,
-                // Method 3: CORS proxy
                 `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`)}`
             ];
         }
 
-        // Load data from Google Sheets
         async function loadGoogleSheetData() {
             const statusBadge = document.getElementById('statusBadge');
             const refreshButton = document.getElementById('refreshButton');
@@ -1014,20 +1678,16 @@
                 
                 for (let i = 0; i < urls.length; i++) {
                     try {
-                        console.log(`Trying method ${i + 1}:`, urls[i]);
                         const response = await fetch(urls[i]);
                         
                         if (response.ok) {
                             csvText = await response.text();
-                            console.log('Successfully fetched data using method', i + 1);
                             break;
                         } else {
                             lastError = `HTTP ${response.status}: ${response.statusText}`;
-                            console.warn(`Method ${i + 1} failed:`, lastError);
                         }
                     } catch (err) {
                         lastError = err.message;
-                        console.warn(`Method ${i + 1} error:`, err);
                     }
                 }
                 
@@ -1036,19 +1696,14 @@
                 }
 
                 const data = parseCSV(csvText);
-                console.log('Parsed data rows:', data.length);
                 
                 if (data.length === 0) {
                     throw new Error('No data found in the spreadsheet');
                 }
                 
-                // Process both attendance and leave data
                 const { attendance, leaves } = processSheetData(data);
                 employeeData = attendance;
                 leaveData = leaves;
-                
-                console.log('Processed employee data:', employeeData.length, 'attendance records');
-                console.log('Processed leave data:', leaveData.length, 'leave records');
                 
                 if (employeeData.length === 0 && leaveData.length === 0) {
                     throw new Error('No valid records found. Please check column headers.');
@@ -1075,7 +1730,7 @@
                 const container = document.getElementById('profilesContainer');
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">❌</div>
+                        <div class="no-data-icon">⚠️</div>
                         <h2>Error Loading Data</h2>
                         <p style="color: #dc2626; font-weight: bold; margin: 15px 0;">${error.message}</p>
                         <p>Please check the following:</p>
@@ -1095,16 +1750,14 @@
             }
         }
 
-        // Parse CSV
         function parseCSV(csvText) {
             csvText = csvText.replace(/^\uFEFF/, '');
             const lines = csvText.trim().split('\n');
             if (lines.length === 0) return [];
             
             const headers = parseCSVLine(lines[0]);
-            console.log('CSV Headers:', headers);
-            
             const data = [];
+            
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
@@ -1145,7 +1798,6 @@
             return result;
         }
 
-        // Process sheet data - separate attendance and leave records
         function processSheetData(data) {
             const attendance = [];
             const leaves = [];
@@ -1154,14 +1806,11 @@
                 const employeeId = row['Employee ID'] || row['EmployeeID'] || row['ID'] || '';
                 const name = row['Name'] || row['Employee Name'] || '';
                 
-                // Skip empty rows
                 if (!employeeId && !name) return;
                 
-                // Check if this is a leave record (has Type of Leave)
                 const leaveType = row['Type of Leave'] || row['Type'] || '';
                 
                 if (leaveType && leaveType.trim()) {
-                    // This is a leave record
                     leaves.push({
                         id: employeeId,
                         name: name,
@@ -1171,7 +1820,6 @@
                         totalDays: parseFloat(row['Total Leave Days'] || row['Days'] || 0)
                     });
                 } else {
-                    // This is an attendance record
                     const date = parseDate(row['Date'] || row['date'] || '');
                     if (date) {
                         attendance.push({
@@ -1189,11 +1837,9 @@
             return { attendance, leaves };
         }
 
-        // Parse date from various formats
         function parseDate(dateStr) {
             if (!dateStr) return '';
             
-            // Try parsing as M/D/YYYY format
             const parts = dateStr.split('/');
             if (parts.length === 3) {
                 const month = parts[0].padStart(2, '0');
@@ -1202,7 +1848,6 @@
                 return `${year}-${month}-${day}`;
             }
             
-            // Try parsing as ISO date
             const date = new Date(dateStr);
             if (!isNaN(date)) {
                 return date.toISOString().split('T')[0];
@@ -1211,7 +1856,6 @@
             return dateStr;
         }
 
-        // Calculate leave balance for an employee
         function calculateLeaveBalance(employeeId, employeeName) {
             const employeeLeaves = leaveData.filter(l => 
                 l.id === employeeId && l.name === employeeName
@@ -1238,7 +1882,6 @@
                 }
             });
             
-            // Calculate remaining
             Object.keys(balance).forEach(type => {
                 balance[type] -= taken[type];
             });
@@ -1246,7 +1889,8 @@
             return { balance, taken };
         }
 
-        // Event Listeners
+        // ========== FILTER AND DISPLAY FUNCTIONS ==========
+        
         document.getElementById('searchBox').addEventListener('input', applyFilters);
         document.getElementById('viewType').addEventListener('change', function() {
             updateFilterVisibility();
@@ -1264,7 +1908,6 @@
         document.getElementById('dashboardMonthFilter').addEventListener('change', updateDashboard);
         document.getElementById('dashboardDayFilter').addEventListener('change', updateDashboard);
 
-        // Populate year filters
         function populateYearFilters() {
             const years = [...new Set(employeeData.map(e => e.date.substring(0, 4)).filter(y => y))].sort();
             
@@ -1278,7 +1921,6 @@
                 years.map(y => `<option value="${y}">${y}</option>`).join('');
         }
 
-        // Update filter visibility
         function updateFilterVisibility() {
             const viewType = document.getElementById('viewType').value;
             const yearGroup = document.getElementById('yearFilterGroup');
@@ -1296,7 +1938,6 @@
             }
         }
 
-        // Update dashboard filter visibility
         function updateDashboardFilterVisibility() {
             const viewType = document.getElementById('dashboardViewType').value;
             const yearGroup = document.getElementById('dashboardYearFilterGroup');
@@ -1314,9 +1955,15 @@
             }
         }
 
-        // Apply filters
         function applyFilters() {
+            if (!currentUser) return;
+            
             let filtered = [...employeeData];
+            
+            // If employee role, only show their data
+            if (currentUser.role === 'employee') {
+                filtered = filtered.filter(e => e.id === currentUser.employeeId);
+            }
             
             const viewType = document.getElementById('viewType').value;
             const year = document.getElementById('yearFilter').value;
@@ -1331,19 +1978,21 @@
                 filtered = filtered.filter(e => e.date === day);
             }
             
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            if (searchTerm) {
-                filtered = filtered.filter(e => 
-                    e.id.toString().toLowerCase().includes(searchTerm) ||
-                    e.name.toLowerCase().includes(searchTerm)
-                );
+            // Admin can search
+            if (currentUser.role === 'admin') {
+                const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+                if (searchTerm) {
+                    filtered = filtered.filter(e => 
+                        e.id.toString().toLowerCase().includes(searchTerm) ||
+                        e.name.toLowerCase().includes(searchTerm)
+                    );
+                }
             }
             
             const grouped = groupAndAggregateData(filtered);
             displayProfiles(grouped);
         }
 
-        // Group and aggregate data
         function groupAndAggregateData(data) {
             const grouped = {};
             
@@ -1368,14 +2017,13 @@
             return Object.values(grouped);
         }
 
-        // Display profiles with leave balance
         function displayProfiles(profiles) {
             const container = document.getElementById('profilesContainer');
             
             if (profiles.length === 0) {
                 container.innerHTML = `
                     <div class="no-data">
-                        <div class="no-data-icon">📭</div>
+                        <div class="no-data-icon">📊</div>
                         <h2>No Data Found</h2>
                         <p>Try adjusting your filters or search criteria</p>
                     </div>
@@ -1387,7 +2035,6 @@
                 const latestRecord = employee.records[employee.records.length - 1];
                 const { balance, taken } = calculateLeaveBalance(employee.id, employee.name);
                 
-                // Determine color class for leave counts
                 const getLeaveClass = (remaining, total) => {
                     const percentage = (remaining / total) * 100;
                     if (percentage <= 20) return 'low';
@@ -1409,73 +2056,83 @@
                         
                         <div class="time-details">
                             <div class="time-item">
-                                <div class="time-label">🌅 Latest Clock In</div>
+                                <div class="time-label">⏰ Latest Clock In</div>
                                 <div class="time-value">${latestRecord.clockIn}</div>
                             </div>
                             <div class="time-item">
-                                <div class="time-label">🌆 Latest Clock Out</div>
+                                <div class="time-label">⏱️ Latest Clock Out</div>
                                 <div class="time-value">${latestRecord.clockOut}</div>
                             </div>
                         </div>
                         
                         <div class="total-hours">
-                            <div class="total-hours-label">Total Hours (Period)</div>
-                            <div class="total-hours-value">${employee.totalHours.toFixed(2)}</div>
+                            <div class="total-hours-label">Total Hours Worked</div>
+                            <div class="total-hours-value">${employee.totalHours.toFixed(2)} hrs</div>
+                        </div>
+                        
+                        <div class="records-count">
+                            📅 ${employee.recordCount} day${employee.recordCount !== 1 ? 's' : ''} of attendance
                         </div>
                         
                         <div class="leave-balance-section">
-                            <div class="leave-balance-title">📋 Leave Balance</div>
+                            <div class="leave-balance-title">📊 Leave Balance</div>
                             <div class="leave-items">
                                 <div class="leave-item">
                                     <div class="leave-type">🏖️ Annual</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave'])}">${balance['Annual Leave']} / ${LEAVE_QUOTAS['Annual Leave']}</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Annual Leave'], LEAVE_QUOTAS['Annual Leave'])}">
+                                        ${balance['Annual Leave']} / ${LEAVE_QUOTAS['Annual Leave']}
+                                    </div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">📋 Casual</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave'])}">${balance['Casual Leave']} / ${LEAVE_QUOTAS['Casual Leave']}</div>
+                                    <div class="leave-type">📅 Casual</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Casual Leave'], LEAVE_QUOTAS['Casual Leave'])}">
+                                        ${balance['Casual Leave']} / ${LEAVE_QUOTAS['Casual Leave']}
+                                    </div>
                                 </div>
                                 <div class="leave-item">
-                                    <div class="leave-type">🏥 Sick</div>
-                                    <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">${balance['Sick Leave']} / ${LEAVE_QUOTAS['Sick Leave']}</div>
+                                    <div class="leave-type">🤒 Sick</div>
+                                    <div class="leave-count ${getLeaveClass(balance['Sick Leave'], LEAVE_QUOTAS['Sick Leave'])}">
+                                        ${balance['Sick Leave']} / ${LEAVE_QUOTAS['Sick Leave']}
+                                    </div>
                                 </div>
                                 <div class="leave-item">
                                     <div class="leave-type">🏠 WFH</div>
-                                    <div class="leave-count">${taken['Work From Home'] || 0}</div>
+                                    <div class="leave-count">
+                                        ${taken['Work From Home']} days
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="records-count">${employee.recordCount} attendance record(s)</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Show dashboard
+        // ========== DASHBOARD FUNCTIONS ==========
+        
         function showDashboard(employeeId, employeeName) {
             currentEmployee = { id: employeeId, name: employeeName };
+            
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('dashboardView').classList.add('active');
             
             document.getElementById('dashboardAvatar').textContent = employeeName.charAt(0).toUpperCase();
             document.getElementById('dashboardId').textContent = employeeId;
             document.getElementById('dashboardName').textContent = employeeName;
             
-            document.getElementById('listView').classList.add('hidden');
-            document.getElementById('dashboardView').classList.add('active');
-            
             updateDashboard();
         }
 
-        // Show list view
         function showListView() {
-            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('listView').style.display = 'block';
             document.getElementById('dashboardView').classList.remove('active');
+            currentEmployee = null;
         }
 
-        // Update dashboard
         function updateDashboard() {
             if (!currentEmployee) return;
             
-            let records = employeeData.filter(e => 
+            let filtered = employeeData.filter(e => 
                 e.id === currentEmployee.id && e.name === currentEmployee.name
             );
             
@@ -1485,134 +2142,164 @@
             const day = document.getElementById('dashboardDayFilter').value;
             
             if (viewType === 'year' && year) {
-                records = records.filter(e => e.date.startsWith(year));
+                filtered = filtered.filter(e => e.date.startsWith(year));
             } else if (viewType === 'month' && year && month) {
-                records = records.filter(e => e.date.startsWith(`${year}-${month}`));
+                filtered = filtered.filter(e => e.date.startsWith(`${year}-${month}`));
             } else if (viewType === 'day' && day) {
-                records = records.filter(e => e.date === day);
+                filtered = filtered.filter(e => e.date === day);
             }
             
-            records.sort((a, b) => b.date.localeCompare(a.date));
+            updateAttendanceStats(filtered);
+            updateLeaveBalance();
+            updateAttendanceTable(filtered);
+            updateLeaveHistory();
+        }
+
+        function updateAttendanceStats(records) {
+            if (records.length === 0) {
+                document.getElementById('statTotalDays').textContent = '0';
+                document.getElementById('statTotalHours').textContent = '0';
+                document.getElementById('statAvgHours').textContent = '0';
+                document.getElementById('statEarliestIn').textContent = '--';
+                document.getElementById('statLatestOut').textContent = '--';
+                return;
+            }
             
-            // Update attendance stats
-            const totalDays = records.length;
-            const totalHours = records.reduce((sum, r) => sum + (parseFloat(r.totalHours) || 0), 0);
-            const avgHours = totalDays > 0 ? (totalHours / totalDays).toFixed(2) : 0;
+            let totalHours = 0;
+            let earliestIn = null;
+            let latestOut = null;
             
-            const clockIns = records.map(r => r.clockIn).filter(t => t !== 'N/A').sort();
-            const clockOuts = records.map(r => r.clockOut).filter(t => t !== 'N/A').sort();
+            records.forEach(record => {
+                const hours = parseFloat(record.totalHours) || 0;
+                totalHours += hours;
+                
+                if (record.clockIn !== 'N/A') {
+                    if (!earliestIn || record.clockIn < earliestIn) {
+                        earliestIn = record.clockIn;
+                    }
+                }
+                
+                if (record.clockOut !== 'N/A') {
+                    if (!latestOut || record.clockOut > latestOut) {
+                        latestOut = record.clockOut;
+                    }
+                }
+            });
             
-            document.getElementById('statTotalDays').textContent = totalDays;
+            const avgHours = totalHours / records.length;
+            
+            document.getElementById('statTotalDays').textContent = records.length;
             document.getElementById('statTotalHours').textContent = totalHours.toFixed(2);
-            document.getElementById('statAvgHours').textContent = avgHours;
-            document.getElementById('statEarliestIn').textContent = clockIns[0] || '--';
-            document.getElementById('statLatestOut').textContent = clockOuts[clockOuts.length - 1] || '--';
+            document.getElementById('statAvgHours').textContent = avgHours.toFixed(2);
+            document.getElementById('statEarliestIn').textContent = earliestIn || '--';
+            document.getElementById('statLatestOut').textContent = latestOut || '--';
+        }
+
+        function updateLeaveBalance() {
+            if (!currentEmployee) return;
             
-            // Update leave balance
             const { balance, taken } = calculateLeaveBalance(currentEmployee.id, currentEmployee.name);
             
-            // Update leave balance cards
-            updateLeaveCard('annual', balance['Annual Leave'], taken['Annual Leave'], LEAVE_QUOTAS['Annual Leave']);
-            updateLeaveCard('casual', balance['Casual Leave'], taken['Casual Leave'], LEAVE_QUOTAS['Casual Leave']);
-            updateLeaveCard('sick', balance['Sick Leave'], taken['Sick Leave'], LEAVE_QUOTAS['Sick Leave']);
-            updateLeaveCard('marriage', taken['Work From Home'], taken['Work From Home'], 1);
+            // Update Annual Leave
+            document.getElementById('annualRemaining').textContent = balance['Annual Leave'];
+            const annualPercent = (balance['Annual Leave'] / LEAVE_QUOTAS['Annual Leave']) * 100;
+            document.getElementById('annualProgress').style.width = annualPercent + '%';
             
-            // Update leave history table
-            const employeeLeaves = leaveData.filter(l => 
-                l.id === currentEmployee.id && l.name === currentEmployee.name
-            ).sort((a, b) => b.startDate.localeCompare(a.startDate));
+            // Update Casual Leave
+            document.getElementById('casualRemaining').textContent = balance['Casual Leave'];
+            const casualPercent = (balance['Casual Leave'] / LEAVE_QUOTAS['Casual Leave']) * 100;
+            document.getElementById('casualProgress').style.width = casualPercent + '%';
             
-            const leaveHistoryBody = document.getElementById('leaveHistoryTableBody');
-            if (employeeLeaves.length === 0) {
-                leaveHistoryBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: #6c757d;">No leave records found</td>
-                    </tr>
-                `;
-            } else {
-                leaveHistoryBody.innerHTML = employeeLeaves.map(leave => {
-                    const badgeClass = leave.leaveType.toLowerCase().replace(' ', '-');
-                    return `
-                        <tr>
-                            <td><span class="leave-badge ${badgeClass}">${leave.leaveType}</span></td>
-                            <td>${leave.startDate || 'N/A'}</td>
-                            <td>${leave.endDate || 'N/A'}</td>
-                            <td><strong>${leave.totalDays} ${leave.totalDays === 1 ? 'day' : 'days'}</strong></td>
-                        </tr>
-                    `;
-                }).join('');
+            // Update Sick Leave
+            document.getElementById('sickRemaining').textContent = balance['Sick Leave'];
+            const sickPercent = (balance['Sick Leave'] / LEAVE_QUOTAS['Sick Leave']) * 100;
+            document.getElementById('sickProgress').style.width = sickPercent + '%';
+            
+            // Update Work From Home
+            document.getElementById('marriageRemaining').textContent = taken['Work From Home'];
+            const wfhPercent = taken['Work From Home'] > 0 ? 100 : 0;
+            document.getElementById('marriageProgress').style.width = wfhPercent + '%';
+        }
+
+        function updateAttendanceTable(records) {
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6c757d;">No attendance records found</td></tr>';
+                return;
             }
             
-            // Update attendance table
-            const tbody = document.getElementById('attendanceTableBody');
-            tbody.innerHTML = records.map(r => `
+            // Sort by date descending
+            records.sort((a, b) => b.date.localeCompare(a.date));
+            
+            tbody.innerHTML = records.map(record => `
                 <tr>
-                    <td>${r.date || 'N/A'}</td>
-                    <td>${r.clockIn}</td>
-                    <td>${r.clockOut}</td>
-                    <td><strong>${r.totalHours}</strong></td>
+                    <td>${new Date(record.date).toLocaleDateString()}</td>
+                    <td>${record.clockIn}</td>
+                    <td>${record.clockOut}</td>
+                    <td><strong>${record.totalHours}</strong></td>
                 </tr>
             `).join('');
         }
 
-        // Update individual leave card
-        function updateLeaveCard(type, remaining, taken, total) {
-            const remainingEl = document.getElementById(`${type}Remaining`);
-            const progressEl = document.getElementById(`${type}Progress`);
+        function updateLeaveHistory() {
+            if (!currentEmployee) return;
             
-            // Special handling for Work From Home (type='marriage' but shows WFH count)
-            if (type === 'marriage') {
-                // For WFH, show count of days worked from home
-                remainingEl.textContent = taken.toFixed(1);
-                // Progress bar represents usage (not remaining)
-                const percentage = Math.min((taken / 30) * 100, 100); // Cap at 100%
-                progressEl.style.width = `${percentage}%`;
-                remainingEl.style.color = '#1e40af';
-                progressEl.style.background = 'linear-gradient(90deg, #3b82f6 0%, #1e40af 100%)';
-            } else {
-                remainingEl.textContent = remaining.toFixed(1);
-                
-                const percentage = (remaining / total) * 100;
-                progressEl.style.width = `${percentage}%`;
-                
-                // Change color based on remaining percentage
-                if (percentage <= 20) {
-                    remainingEl.style.color = '#dc2626';
-                    progressEl.style.background = 'linear-gradient(90deg, #dc2626 0%, #ef4444 100%)';
-                } else if (percentage <= 50) {
-                    remainingEl.style.color = '#d97706';
-                    progressEl.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)';
-                } else {
-                    remainingEl.style.color = '#16a34a';
-                    progressEl.style.background = '#CF278D';
-                }
+            const employeeLeaves = leaveData.filter(l => 
+                l.id === currentEmployee.id && l.name === currentEmployee.name
+            );
+            
+            const tbody = document.getElementById('leaveHistoryTableBody');
+            
+            if (employeeLeaves.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6c757d;">No leave records found</td></tr>';
+                return;
             }
+            
+            // Sort by start date descending
+            employeeLeaves.sort((a, b) => b.startDate.localeCompare(a.startDate));
+            
+            tbody.innerHTML = employeeLeaves.map(leave => {
+                let badgeClass = 'leave-badge ';
+                switch (leave.leaveType) {
+                    case 'Annual Leave':
+                        badgeClass += 'annual';
+                        break;
+                    case 'Casual Leave':
+                        badgeClass += 'casual';
+                        break;
+                    case 'Sick Leave':
+                        badgeClass += 'sick';
+                        break;
+                    case 'Work From Home':
+                        badgeClass += 'work-from-home';
+                        break;
+                    default:
+                        badgeClass += 'annual';
+                }
+                
+                return `
+                    <tr>
+                        <td><span class="${badgeClass}">${leave.leaveType}</span></td>
+                        <td>${new Date(leave.startDate).toLocaleDateString()}</td>
+                        <td>${new Date(leave.endDate).toLocaleDateString()}</td>
+                        <td><strong>${leave.totalDays} day${leave.totalDays !== 1 ? 's' : ''}</strong></td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        // Setup auto-refresh
-        function setupAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-            
+        // ========== AUTO-REFRESH ==========
+        
+        function startAutoRefresh() {
             // Refresh every 5 minutes
             autoRefreshInterval = setInterval(() => {
                 loadGoogleSheetData();
-            }, 300000);
+            }, 5 * 60 * 1000);
         }
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            loadGoogleSheetData();
-            setupAutoRefresh();
-        });
-
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-        });
+        // ========== INITIALIZATION ==========
+        // Firebase auth state listener will handle initial load
     </script>
 </body>
 </html>
