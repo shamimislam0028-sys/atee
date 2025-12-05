@@ -888,6 +888,216 @@
             color: #1e40af;
         }
 
+        .request-admin-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .request-admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .request-admin-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .admin-notifications-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .admin-notifications-btn:hover {
+            background: white;
+            color: #354894;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .notification-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .notification-modal.active {
+            display: flex;
+        }
+
+        .notification-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .notification-header h2 {
+            color: #2d3748;
+            font-size: 24px;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal-btn:hover {
+            background: #f8f9fa;
+            color: #2d3748;
+        }
+
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notification-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
+        .notification-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .notification-user-info {
+            flex: 1;
+        }
+
+        .notification-user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .notification-user-details {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .approve-btn, .deny-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .approve-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .approve-btn:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+        }
+
+        .deny-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .deny-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .no-notifications-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
         @media (max-width: 768px) {
             .profiles-section {
                 grid-template-columns: 1fr;
@@ -982,14 +1192,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Role</label>
-                    <select class="form-select" id="signupRole" required>
-                        <option value="">Select Your Role</option>
-                        <option value="employee">Employee - View My Records</option>
-                        <option value="admin">Admin - View All Records</option>
-                    </select>
-                </div>
+                <!-- Role is automatically set to employee -->
 
                 <button type="submit" class="auth-button" id="signupBtn">
                     ✨ Create Account
@@ -1009,6 +1212,10 @@
                         <span id="userNameDisplay"></span>
                         <span class="role-badge" id="userRoleBadge"></span>
                     </div>
+                    <button class="admin-notifications-btn" id="adminNotificationsBtn" onclick="showNotifications()" style="display: none;">
+                        🔔 Notifications
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </button>
                     <button class="logout-btn" onclick="handleLogout()">
                         🚪 Logout
                     </button>
@@ -1031,6 +1238,14 @@
                     <li>👤 <strong>Individual Dashboards:</strong> Click any employee card to view detailed attendance & leave history</li>
                     <li id="roleAccessInfo">🔒 <strong>Access Level:</strong> <span id="accessLevelText"></span></li>
                 </ul>
+                
+                <!-- Request Admin Access Button for Employees -->
+                <div id="requestAdminSection" style="display: none; margin-top: 20px;">
+                    <button class="request-admin-btn" id="requestAdminBtn" onclick="requestAdminAccess()">
+                        👑 Request Admin Access
+                    </button>
+                    <p id="requestStatus" style="text-align: center; margin-top: 10px; font-size: 14px; color: #6c757d;"></p>
+                </div>
             </div>
 
             <div class="status-section">
@@ -1293,6 +1508,22 @@
         </div>
     </div>
 
+    <!-- Admin Notifications Modal -->
+    <div id="notificationModal" class="notification-modal">
+        <div class="notification-content">
+            <div class="notification-header">
+                <h2>🔔 Admin Access Requests</h2>
+                <button class="close-modal-btn" onclick="closeNotifications()">×</button>
+            </div>
+            <div id="notificationList" class="notification-list">
+                <div class="no-notifications">
+                    <div class="no-notifications-icon">📥</div>
+                    <p>No pending requests</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -1389,12 +1620,7 @@
             const employeeId = document.getElementById('signupEmployeeId').value.trim();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
-            const role = document.getElementById('signupRole').value;
-            
-            if (!role) {
-                showAuthMessage('Please select a role');
-                return;
-            }
+            const role = 'employee'; // All new users are employees by default
             
             const signupBtn = document.getElementById('signupBtn');
             signupBtn.disabled = true;
@@ -1416,8 +1642,9 @@
                     employeeId: employeeId,
                     email: email,
                     role: role,
-                    isAdmin: role === 'admin',  // Custom claim simulation
+                    isAdmin: false,  // All start as non-admin
                     isActive: true,  // Account status
+                    adminRequestPending: false,  // Track admin access request status
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -1641,6 +1868,209 @@
             // Hide/show search for employees
             if (currentUser.role === 'employee') {
                 document.getElementById('searchSection').style.display = 'none';
+            }
+            
+            // Show/hide admin request button and notification button
+            updateAdminRequestUI();
+        }
+
+        // Update admin request UI based on user role
+        async function updateAdminRequestUI() {
+            const requestSection = document.getElementById('requestAdminSection');
+            const requestBtn = document.getElementById('requestAdminBtn');
+            const requestStatus = document.getElementById('requestStatus');
+            const notificationsBtn = document.getElementById('adminNotificationsBtn');
+            
+            if (currentUser.role === 'admin' && currentUser.isAdmin) {
+                // Show notifications button for admins
+                notificationsBtn.style.display = 'block';
+                requestSection.style.display = 'none';
+                
+                // Load and display pending requests count
+                loadAdminNotifications();
+            } else if (currentUser.role === 'employee') {
+                // Show request admin button for employees
+                requestSection.style.display = 'block';
+                notificationsBtn.style.display = 'none';
+                
+                // Check if request is pending
+                if (currentUser.adminRequestPending) {
+                    requestBtn.disabled = true;
+                    requestBtn.innerHTML = '⏳ Request Pending';
+                    requestStatus.textContent = 'Your admin access request is awaiting approval';
+                    requestStatus.style.color = '#d97706';
+                } else {
+                    requestBtn.disabled = false;
+                    requestBtn.innerHTML = '👑 Request Admin Access';
+                    requestStatus.textContent = '';
+                }
+            }
+        }
+
+        // Request admin access (employee function)
+        async function requestAdminAccess() {
+            if (!currentUser || currentUser.role !== 'employee') return;
+            
+            const requestBtn = document.getElementById('requestAdminBtn');
+            const requestStatus = document.getElementById('requestStatus');
+            
+            if (confirm('Request admin access? An administrator will review your request.')) {
+                try {
+                    requestBtn.disabled = true;
+                    requestBtn.innerHTML = '⏳ Sending Request...';
+                    
+                    // Create admin request in Firestore
+                    await db.collection('adminRequests').add({
+                        userId: currentUser.uid,
+                        userName: currentUser.name,
+                        userEmail: currentUser.email,
+                        employeeId: currentUser.employeeId,
+                        status: 'pending',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update user's pending status
+                    await db.collection('users').doc(currentUser.uid).update({
+                        adminRequestPending: true
+                    });
+                    
+                    currentUser.adminRequestPending = true;
+                    
+                    requestBtn.innerHTML = '⏳ Request Pending';
+                    requestStatus.textContent = 'Your admin access request has been sent successfully!';
+                    requestStatus.style.color = '#16a34a';
+                    
+                    setTimeout(() => {
+                        requestStatus.textContent = 'Your admin access request is awaiting approval';
+                        requestStatus.style.color = '#d97706';
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error requesting admin access:', error);
+                    alert('Failed to send request: ' + error.message);
+                    requestBtn.disabled = false;
+                    requestBtn.innerHTML = '👑 Request Admin Access';
+                }
+            }
+        }
+
+        // Load admin notifications (admin function)
+        async function loadAdminNotifications() {
+            try {
+                const snapshot = await db.collection('adminRequests')
+                    .where('status', '==', 'pending')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const count = snapshot.size;
+                const badge = document.getElementById('notificationBadge');
+                
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                // Store requests for modal display
+                window.pendingRequests = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // Show notifications modal (admin function)
+        function showNotifications() {
+            const modal = document.getElementById('notificationModal');
+            const notificationList = document.getElementById('notificationList');
+            
+            if (!window.pendingRequests || window.pendingRequests.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="no-notifications">
+                        <div class="no-notifications-icon">📥</div>
+                        <p>No pending requests</p>
+                    </div>
+                `;
+            } else {
+                notificationList.innerHTML = window.pendingRequests.map(request => `
+                    <div class="notification-item">
+                        <div class="notification-item-header">
+                            <div class="notification-user-info">
+                                <div class="notification-user-name">👤 ${request.userName}</div>
+                                <div class="notification-user-details">
+                                    <div>Employee ID: ${request.employeeId}</div>
+                                    <div>Email: ${request.userEmail}</div>
+                                    <div style="font-size: 12px; color: #6c757d; margin-top: 5px;">
+                                        ${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleString() : 'Just now'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="approve-btn" onclick="handleAdminRequest('${request.id}', '${request.userId}', true)">
+                                ✅ Approve
+                            </button>
+                            <button class="deny-btn" onclick="handleAdminRequest('${request.id}', '${request.userId}', false)">
+                                ❌ Deny
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Close notifications modal
+        function closeNotifications() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+
+        // Handle admin request approval/denial (admin function)
+        async function handleAdminRequest(requestId, userId, approve) {
+            try {
+                if (approve) {
+                    // Approve: Make user admin
+                    await db.collection('users').doc(userId).update({
+                        role: 'admin',
+                        isAdmin: true,
+                        adminRequestPending: false
+                    });
+                    
+                    // Update request status
+                    await db.collection('adminRequests').doc(requestId).update({
+                        status: 'approved',
+                        approvedBy: currentUser.uid,
+                        approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert('✅ Admin access granted successfully!');
+                } else {
+                    // Deny: Keep as employee
+                    await db.collection('users').doc(userId).update({
+                        adminRequestPending: false
+                    });
+                    
+                    // Update request status
+                    await db.collection('adminRequests').doc(requestId).update({
+                        status: 'denied',
+                        deniedBy: currentUser.uid,
+                        deniedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert('❌ Admin access request denied');
+                }
+                
+                // Reload notifications
+                await loadAdminNotifications();
+                
+                // Refresh modal
+                showNotifications();
+            } catch (error) {
+                console.error('Error handling admin request:', error);
+                alert('Failed to process request: ' + error.message);
             }
         }
 
@@ -2286,7 +2716,19 @@
             // Refresh every 5 minutes
             autoRefreshInterval = setInterval(() => {
                 loadGoogleSheetData();
+                
+                // Also refresh admin notifications if user is admin
+                if (currentUser && currentUser.role === 'admin' && currentUser.isAdmin) {
+                    loadAdminNotifications();
+                }
             }, 5 * 60 * 1000);
+            
+            // Check notifications more frequently (every 30 seconds) for admins
+            if (currentUser && currentUser.role === 'admin' && currentUser.isAdmin) {
+                setInterval(() => {
+                    loadAdminNotifications();
+                }, 30 * 1000);
+            }
         }
 
         // ========== INITIALIZATION ==========
