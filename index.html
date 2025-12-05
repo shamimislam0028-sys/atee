@@ -1547,6 +1547,13 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // ========== ENABLE AUTH PERSISTENCE ==========
+        // Keep users logged in across page reloads
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .catch((error) => {
+                console.error('Failed to set auth persistence:', error);
+            });
+
         // ========== GLOBAL STATE ==========
         let employeeData = [];
         let leaveData = [];
@@ -1617,7 +1624,7 @@
             event.preventDefault();
             
             const name = document.getElementById('signupName').value.trim();
-            const employeeId = document.getElementById('signupEmployeeId').value.trim();
+            const employeeId = document.getElementById('signupEmployeeId').value.trim().toUpperCase();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const role = 'employee'; // All new users are employees by default
@@ -1627,6 +1634,28 @@
             signupBtn.textContent = '⏳ Creating Account...';
             
             try {
+                // ========== FIX 1: CHECK FOR DUPLICATE EMPLOYEE ID ==========
+                // Query all users to check if employee ID already exists
+                const employeeIdQuery = await db.collection('users')
+                    .where('employeeId', '==', employeeId)
+                    .get();
+                
+                if (!employeeIdQuery.empty) {
+                    showAuthMessage('❌ Employee ID already exists. Please use a unique Employee ID.');
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = '✨ Create Account';
+                    return;
+                }
+                
+                // Also check employeeIds collection for faster lookups
+                const employeeIdDoc = await db.collection('employeeIds').doc(employeeId).get();
+                if (employeeIdDoc.exists) {
+                    showAuthMessage('❌ Employee ID already exists. Please use a unique Employee ID.');
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = '✨ Create Account';
+                    return;
+                }
+                
                 // Create user in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
@@ -1636,8 +1665,12 @@
                     displayName: name
                 });
                 
+                // Use Firestore batch to ensure both documents are created atomically
+                const batch = db.batch();
+                
                 // Store user data in Firestore with role-based access control
-                await db.collection('users').doc(user.uid).set({
+                const userRef = db.collection('users').doc(user.uid);
+                batch.set(userRef, {
                     name: name,
                     employeeId: employeeId,
                     email: email,
@@ -1649,7 +1682,17 @@
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                showAuthMessage('Account created successfully! Redirecting...', 'success');
+                // Create employee ID mapping for faster duplicate checks
+                const employeeIdRef = db.collection('employeeIds').doc(employeeId);
+                batch.set(employeeIdRef, {
+                    userId: user.uid,
+                    userName: name,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await batch.commit();
+                
+                showAuthMessage('✅ Account created successfully! Redirecting...', 'success');
                 
                 // Will automatically trigger onAuthStateChanged
             } catch (error) {
@@ -1661,7 +1704,7 @@
                         errorMessage += 'Email already registered.';
                         break;
                     case 'auth/weak-password':
-                        errorMessage += 'Password is too weak.';
+                        errorMessage += 'Password is too weak (minimum 6 characters).';
                         break;
                     case 'auth/invalid-email':
                         errorMessage += 'Invalid email address.';
@@ -1811,6 +1854,26 @@
                         
                         // Load data based on role permissions
                         await loadGoogleSheetData();
+                        
+                        // ========== FIX 2: REDIRECT EMPLOYEES TO THEIR DASHBOARD ==========
+                        // If user is an employee (not admin), show their dashboard directly
+                        if (currentUser.role === 'employee' && !currentUser.isAdmin) {
+                            // Find employee data and show dashboard
+                            const employeeRecord = employeeData.find(emp => 
+                                emp.employeeId === currentUser.employeeId
+                            );
+                            
+                            if (employeeRecord) {
+                                showEmployeeDashboard(employeeRecord);
+                            } else {
+                                // If no attendance data yet, still show dashboard with empty state
+                                showEmployeeDashboard({
+                                    employeeId: currentUser.employeeId,
+                                    name: currentUser.name,
+                                    records: []
+                                });
+                            }
+                        }
                         
                         // Start auto-refresh
                         startAutoRefresh();
