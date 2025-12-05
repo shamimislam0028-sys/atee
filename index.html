@@ -1377,16 +1377,6 @@
                 </div>
             </div>
 
-            <!-- Request Admin Access Section (for Employee Dashboard) -->
-            <div id="dashboardRequestAdminSection" class="instructions" style="display: none; margin: 20px 30px;">
-                <h3>👑 Admin Access</h3>
-                <p style="color: #4338ca; margin-bottom: 15px;">Want to manage all employee data? Request admin access from your administrator.</p>
-                <button class="request-admin-btn" id="dashboardRequestAdminBtn" onclick="requestAdminAccess()">
-                    👑 Request Admin Access
-                </button>
-                <p id="dashboardRequestStatus" style="text-align: center; margin-top: 10px; font-size: 14px; color: #6c757d;"></p>
-            </div>
-
             <!-- Attendance Stats -->
             <div class="dashboard-stats">
                 <div class="stat-card">
@@ -1557,13 +1547,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // ========== ENABLE AUTH PERSISTENCE ==========
-        // Keep users logged in across page reloads
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .catch((error) => {
-                console.error('Failed to set auth persistence:', error);
-            });
-
         // ========== GLOBAL STATE ==========
         let employeeData = [];
         let leaveData = [];
@@ -1634,7 +1617,7 @@
             event.preventDefault();
             
             const name = document.getElementById('signupName').value.trim();
-            const employeeId = document.getElementById('signupEmployeeId').value.trim().toUpperCase();
+            const employeeId = document.getElementById('signupEmployeeId').value.trim();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const role = 'employee'; // All new users are employees by default
@@ -1644,28 +1627,6 @@
             signupBtn.textContent = '⏳ Creating Account...';
             
             try {
-                // ========== FIX 1: CHECK FOR DUPLICATE EMPLOYEE ID ==========
-                // Query all users to check if employee ID already exists
-                const employeeIdQuery = await db.collection('users')
-                    .where('employeeId', '==', employeeId)
-                    .get();
-                
-                if (!employeeIdQuery.empty) {
-                    showAuthMessage('❌ Employee ID already exists. Please use a unique Employee ID.');
-                    signupBtn.disabled = false;
-                    signupBtn.textContent = '✨ Create Account';
-                    return;
-                }
-                
-                // Also check employeeIds collection for faster lookups
-                const employeeIdDoc = await db.collection('employeeIds').doc(employeeId).get();
-                if (employeeIdDoc.exists) {
-                    showAuthMessage('❌ Employee ID already exists. Please use a unique Employee ID.');
-                    signupBtn.disabled = false;
-                    signupBtn.textContent = '✨ Create Account';
-                    return;
-                }
-                
                 // Create user in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
@@ -1675,12 +1636,8 @@
                     displayName: name
                 });
                 
-                // Use Firestore batch to ensure both documents are created atomically
-                const batch = db.batch();
-                
                 // Store user data in Firestore with role-based access control
-                const userRef = db.collection('users').doc(user.uid);
-                batch.set(userRef, {
+                await db.collection('users').doc(user.uid).set({
                     name: name,
                     employeeId: employeeId,
                     email: email,
@@ -1692,17 +1649,7 @@
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Create employee ID mapping for faster duplicate checks
-                const employeeIdRef = db.collection('employeeIds').doc(employeeId);
-                batch.set(employeeIdRef, {
-                    userId: user.uid,
-                    userName: name,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                await batch.commit();
-                
-                showAuthMessage('✅ Account created successfully! Redirecting...', 'success');
+                showAuthMessage('Account created successfully! Redirecting...', 'success');
                 
                 // Will automatically trigger onAuthStateChanged
             } catch (error) {
@@ -1714,7 +1661,7 @@
                         errorMessage += 'Email already registered.';
                         break;
                     case 'auth/weak-password':
-                        errorMessage += 'Password is too weak (minimum 6 characters).';
+                        errorMessage += 'Password is too weak.';
                         break;
                     case 'auth/invalid-email':
                         errorMessage += 'Invalid email address.';
@@ -1865,22 +1812,6 @@
                         // Load data based on role permissions
                         await loadGoogleSheetData();
                         
-                        // ========== FIX 2: REDIRECT EMPLOYEES TO THEIR DASHBOARD ==========
-                        // If user is an employee (not admin), show their dashboard directly
-                        if (currentUser.role === 'employee' && !currentUser.isAdmin) {
-                            // Find employee data and show dashboard
-                            const employeeRecord = employeeData.find(emp => 
-                                emp.employeeId === currentUser.employeeId
-                            );
-                            
-                            if (employeeRecord) {
-                                showDashboard(employeeRecord.employeeId, employeeRecord.name);
-                            } else {
-                                // If no attendance data yet, still show dashboard with empty state
-                                showDashboard(currentUser.employeeId, currentUser.name);
-                            }
-                        }
-                        
                         // Start auto-refresh
                         startAutoRefresh();
                     } else {
@@ -1948,39 +1879,30 @@
             const requestSection = document.getElementById('requestAdminSection');
             const requestBtn = document.getElementById('requestAdminBtn');
             const requestStatus = document.getElementById('requestStatus');
-            const dashboardRequestSection = document.getElementById('dashboardRequestAdminSection');
-            const dashboardRequestBtn = document.getElementById('dashboardRequestAdminBtn');
-            const dashboardRequestStatus = document.getElementById('dashboardRequestStatus');
             const notificationsBtn = document.getElementById('adminNotificationsBtn');
             
             if (currentUser.role === 'admin' && currentUser.isAdmin) {
                 // Show notifications button for admins
                 notificationsBtn.style.display = 'block';
-                if (requestSection) requestSection.style.display = 'none';
-                if (dashboardRequestSection) dashboardRequestSection.style.display = 'none';
+                requestSection.style.display = 'none';
                 
                 // Load and display pending requests count
                 loadAdminNotifications();
             } else if (currentUser.role === 'employee') {
-                // Hide request admin button from list view (moved to dashboard)
-                if (requestSection) requestSection.style.display = 'none';
+                // Show request admin button for employees
+                requestSection.style.display = 'block';
                 notificationsBtn.style.display = 'none';
                 
-                // Show request admin button in dashboard
-                if (dashboardRequestSection) {
-                    dashboardRequestSection.style.display = 'block';
-                    
-                    // Check if request is pending
-                    if (currentUser.adminRequestPending) {
-                        dashboardRequestBtn.disabled = true;
-                        dashboardRequestBtn.innerHTML = '⏳ Request Pending';
-                        dashboardRequestStatus.textContent = 'Your admin access request is awaiting approval';
-                        dashboardRequestStatus.style.color = '#d97706';
-                    } else {
-                        dashboardRequestBtn.disabled = false;
-                        dashboardRequestBtn.innerHTML = '👑 Request Admin Access';
-                        dashboardRequestStatus.textContent = '';
-                    }
+                // Check if request is pending
+                if (currentUser.adminRequestPending) {
+                    requestBtn.disabled = true;
+                    requestBtn.innerHTML = '⏳ Request Pending';
+                    requestStatus.textContent = 'Your admin access request is awaiting approval';
+                    requestStatus.style.color = '#d97706';
+                } else {
+                    requestBtn.disabled = false;
+                    requestBtn.innerHTML = '👑 Request Admin Access';
+                    requestStatus.textContent = '';
                 }
             }
         }
@@ -1989,9 +1911,8 @@
         async function requestAdminAccess() {
             if (!currentUser || currentUser.role !== 'employee') return;
             
-            // Try both button IDs (one for list view, one for dashboard)
-            const requestBtn = document.getElementById('requestAdminBtn') || document.getElementById('dashboardRequestAdminBtn');
-            const requestStatus = document.getElementById('requestStatus') || document.getElementById('dashboardRequestStatus');
+            const requestBtn = document.getElementById('requestAdminBtn');
+            const requestStatus = document.getElementById('requestStatus');
             
             if (confirm('Request admin access? An administrator will review your request.')) {
                 try {
@@ -2015,34 +1936,13 @@
                     
                     currentUser.adminRequestPending = true;
                     
-                    // Update both buttons if they exist
-                    const dashboardBtn = document.getElementById('dashboardRequestAdminBtn');
-                    const listBtn = document.getElementById('requestAdminBtn');
-                    const dashboardStatus = document.getElementById('dashboardRequestStatus');
-                    const listStatus = document.getElementById('requestStatus');
-                    
-                    if (requestBtn) requestBtn.innerHTML = '⏳ Request Pending';
-                    if (dashboardBtn) dashboardBtn.innerHTML = '⏳ Request Pending';
-                    if (listBtn) listBtn.innerHTML = '⏳ Request Pending';
-                    
-                    if (requestStatus) {
-                        requestStatus.textContent = 'Your admin access request has been sent successfully!';
-                        requestStatus.style.color = '#16a34a';
-                    }
+                    requestBtn.innerHTML = '⏳ Request Pending';
+                    requestStatus.textContent = 'Your admin access request has been sent successfully!';
+                    requestStatus.style.color = '#16a34a';
                     
                     setTimeout(() => {
-                        if (requestStatus) {
-                            requestStatus.textContent = 'Your admin access request is awaiting approval';
-                            requestStatus.style.color = '#d97706';
-                        }
-                        if (dashboardStatus) {
-                            dashboardStatus.textContent = 'Your admin access request is awaiting approval';
-                            dashboardStatus.style.color = '#d97706';
-                        }
-                        if (listStatus) {
-                            listStatus.textContent = 'Your admin access request is awaiting approval';
-                            listStatus.style.color = '#d97706';
-                        }
+                        requestStatus.textContent = 'Your admin access request is awaiting approval';
+                        requestStatus.style.color = '#d97706';
                     }, 3000);
                 } catch (error) {
                     console.error('Error requesting admin access:', error);
