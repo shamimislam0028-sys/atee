@@ -1098,36 +1098,492 @@
             opacity: 0.5;
         }
 
-        @media (max-width: 768px) {
+        /* ========== TABLET STYLES (768px - 1024px) ========== */
+        @media (max-width: 1024px) {
             .profiles-section {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 15px;
+                padding: 20px;
             }
-            
-            .filter-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
+
             .dashboard-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .user-info-bar {
-                position: static;
-                justify-content: center;
-                margin-top: 15px;
-            }
-
-            .leave-items {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 20px;
             }
 
             .leave-balance-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .instructions {
+                margin: 15px 20px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        /* ========== MOBILE STYLES (max-width: 768px) ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            /* Auth Container Mobile */
+            .auth-container {
+                margin: 10px auto;
+                max-width: 100%;
+            }
+
+            .auth-header {
+                padding: 25px 20px;
+            }
+
+            .auth-header h1 {
+                font-size: 22px;
+            }
+
+            .auth-header p {
+                font-size: 13px;
+            }
+
+            .auth-body {
+                padding: 25px 20px;
+            }
+
+            /* Header Mobile */
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+                padding-top: 10px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            /* User Info Bar Mobile */
+            .user-info-bar {
+                position: static;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 15px;
+                width: 100%;
+            }
+
+            .user-badge {
+                width: 100%;
+                justify-content: center;
+                font-size: 12px;
+                padding: 6px 12px;
+                flex-wrap: wrap;
+            }
+
+            .logout-btn, .admin-notifications-btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            /* Back Button Mobile */
+            .back-button {
+                position: static;
+                display: block;
+                margin: 0 auto 15px;
+                width: fit-content;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+
+            /* Auto Refresh Indicator Mobile */
+            .auto-refresh-indicator {
+                font-size: 12px;
+                padding: 6px 12px;
+                margin-top: 10px;
+            }
+
+            /* Dashboard Employee Info Mobile */
+            .dashboard-employee-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .dashboard-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 30px;
+            }
+
+            #dashboardName {
+                font-size: 22px;
+            }
+
+            /* Status Section Mobile */
+            .status-section {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .status-info {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .refresh-button {
+                width: 100%;
+                padding: 12px;
+            }
+
+            /* Filter Section Mobile */
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-select, .filter-input {
+                width: 100%;
+                min-width: 100%;
+                padding: 12px;
+            }
+
+            /* Search Section Mobile */
+            .search-section {
+                padding: 15px;
+            }
+
+            .search-box {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            /* Profiles Section Mobile */
+            .profiles-section {
                 grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .profile-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .employee-name {
+                font-size: 18px;
+            }
+
+            .employee-id {
+                font-size: 13px;
+            }
+
+            .time-details {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .time-value {
+                font-size: 16px;
+            }
+
+            .total-hours-value {
+                font-size: 24px;
+            }
+
+            /* Dashboard Stats Mobile */
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            /* Leave Items Mobile */
+            .leave-items {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            /* Leave Balance Grid Mobile */
+            .leave-balance-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .leave-stat-card {
+                padding: 15px;
+            }
+
+            .leave-remaining {
+                font-size: 28px;
+            }
+
+            /* Instructions Mobile */
+            .instructions {
+                margin: 15px;
+                padding: 15px;
+            }
+
+            .instructions h3 {
+                font-size: 16px;
+            }
+
+            .instructions ul {
+                font-size: 13px;
+                margin-left: 15px;
+            }
+
+            /* Table Mobile */
+            .attendance-table, .leave-history-section {
+                padding: 15px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            th {
+                font-size: 10px;
+            }
+
+            .leave-history-title {
+                font-size: 18px;
+            }
+
+            /* Notification Modal Mobile */
+            .notification-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 85vh;
+            }
+
+            .notification-header h2 {
+                font-size: 20px;
+            }
+
+            .notification-item {
+                padding: 15px;
+            }
+
+            .notification-user-name {
+                font-size: 16px;
+            }
+
+            .notification-user-details {
+                font-size: 12px;
+            }
+
+            .notification-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .approve-btn, .deny-btn {
+                width: 100%;
+                padding: 12px;
+            }
+
+            /* No Data Mobile */
+            .no-data {
+                padding: 40px 15px;
+            }
+
+            .no-data-icon {
+                font-size: 48px;
+            }
+
+            .no-data h2 {
+                font-size: 18px;
+            }
+
+            .no-data p {
+                font-size: 14px;
+            }
+        }
+
+        /* ========== SMALL MOBILE STYLES (max-width: 480px) ========== */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
             }
 
             .auth-container {
-                margin: 20px auto;
+                margin: 5px auto;
+                border-radius: 10px;
+            }
+
+            .auth-header {
+                padding: 20px 15px;
+            }
+
+            .auth-header h1 {
+                font-size: 18px;
+            }
+
+            .auth-body {
+                padding: 20px 15px;
+            }
+
+            .auth-tab {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .header p {
+                font-size: 11px;
+            }
+
+            .user-badge {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+
+            .user-avatar-small {
+                width: 25px;
+                height: 25px;
+                font-size: 12px;
+            }
+
+            .container {
+                border-radius: 10px;
+            }
+
+            .profile-card {
+                padding: 15px;
+            }
+
+            .employee-name {
+                font-size: 16px;
+            }
+
+            .time-label {
+                font-size: 10px;
+            }
+
+            .stat-icon {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .leave-remaining {
+                font-size: 24px;
+            }
+
+            .leave-total {
+                font-size: 14px;
+            }
+
+            .instructions {
+                margin: 10px;
+                padding: 12px;
+            }
+
+            .instructions h3 {
+                font-size: 14px;
+            }
+
+            .instructions ul {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px 5px;
+                font-size: 11px;
+            }
+
+            .notification-content {
+                padding: 15px;
+            }
+
+            .dashboard-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 26px;
+            }
+
+            #dashboardName {
+                font-size: 18px;
+            }
+        }
+
+        /* ========== LANDSCAPE MOBILE (max-height: 500px) ========== */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .auth-container {
+                margin: 10px auto;
+            }
+
+            .auth-header {
+                padding: 15px 20px;
+            }
+
+            .auth-header h1 {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+
+            .auth-body {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+                margin-bottom: 5px;
+            }
+
+            .dashboard-employee-info {
+                margin-top: 10px;
+            }
+
+            .no-data {
+                padding: 30px 15px;
             }
         }
     </style>
